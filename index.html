@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+  <title>ReactLearn</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
+    html,body{height:100%;font-family:'Poppins',-apple-system,system-ui,sans-serif;overflow-x:hidden}
+    ::-webkit-scrollbar{display:none}
+    input,textarea,select,button{font-family:inherit}
+    @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+    /* ── CSS vars from Telegram theme ── */
+    :root{
+      --bg:   var(--tg-theme-bg-color,#f0f2f5);
+      --card: var(--tg-theme-secondary-bg-color,#ffffff);
+      --text: var(--tg-theme-text-color,#111827);
+      --sub:  var(--tg-theme-hint-color,#6b7280);
+      --btn:  var(--tg-theme-button-color,#6366f1);
+      --btnt: var(--tg-theme-button-text-color,#ffffff);
+      --lnk:  var(--tg-theme-link-color,#6366f1);
+      --brd:  rgba(0,0,0,.1);
+      --inp:  rgba(0,0,0,.05);
+      --inp-brd: rgba(0,0,0,.15);
+      --success:#22c55e; --danger:#ef4444; --warn:#f59e0b;
+    }
+
+    body{background:var(--bg);color:var(--text)}
+
+    /* ── Layout ── */
+    #root{min-height:100vh;display:flex;flex-direction:column}
+    #page{flex:1;padding-bottom:72px;animation:fadeUp .25s ease}
+
+    /* ── Tab bar ── */
+    #tabbar{
+      position:fixed;bottom:0;left:0;right:0;z-index:200;
+      background:var(--card);border-top:1px solid var(--brd);
+      display:flex;padding-bottom:env(safe-area-inset-bottom,0px)
+    }
+    .tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      padding:8px 0 6px;border:none;background:none;cursor:pointer;color:var(--sub);
+      transition:color .15s;position:relative}
+    .tab.on{color:var(--btn)}
+    .tab-bar{position:absolute;top:0;left:20%;right:20%;height:2.5px;border-radius:2px;
+      background:var(--btn);opacity:0;transition:opacity .15s}
+    .tab.on .tab-bar{opacity:1}
+    .tab svg{transition:transform .15s}
+    .tab.on svg{transform:scale(1.12)}
+    .tab span{font-size:10px;font-weight:500;margin-top:3px}
+    .tab.on span{font-weight:700}
+
+    /* ── Cards / common ── */
+    .card{background:var(--card);border-radius:16px;border:1px solid var(--brd)}
+    .btn-primary{
+      width:100%;padding:14px;border-radius:14px;border:none;cursor:pointer;
+      background:linear-gradient(135deg,var(--btn),#7c3aed);color:#fff;
+      font-size:15px;font-weight:800;
+      box-shadow:0 4px 18px color-mix(in srgb,var(--btn) 40%,transparent);
+      transition:opacity .15s,transform .1s
+    }
+    .btn-primary:active{opacity:.82;transform:scale(.98)}
+    .btn-primary:disabled{background:#d1d5db;color:#9ca3af;box-shadow:none;cursor:default}
+    .btn-outline{
+      width:100%;padding:13px;border-radius:14px;border:1.5px solid var(--brd);
+      background:none;color:var(--sub);font-size:13px;font-weight:700;cursor:pointer;
+      transition:opacity .15s
+    }
+    .btn-outline:active{opacity:.7}
+
+    /* ── Inputs ── */
+    .field{
+      width:100%;box-sizing:border-box;padding:12px 13px;
+      border-radius:12px;border:1.5px solid var(--inp-brd);
+      background:var(--inp);color:var(--text);font-size:13px;
+      outline:none;transition:border-color .15s
+    }
+    .field:focus{border-color:var(--btn)}
+    .field-ico{padding-left:42px}
+    .inp-wrap{position:relative}
+    .inp-ico{position:absolute;left:13px;top:50%;transform:translateY(-50%);pointer-events:none}
+    textarea.field{resize:none;padding:12px 13px}
+    select.field{appearance:none}
+
+    /* ── Section header ── */
+    .sec-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px}
+    .sec-hdr h2{margin:0;font-size:18px;font-weight:800}
+    .sec-hdr p{margin:2px 0 0;font-size:12px;color:var(--sub)}
+
+    /* ── Search ── */
+    .search-wrap{position:relative;margin:6px 16px 10px}
+    .search-wrap input{
+      width:100%;box-sizing:border-box;padding:10px 34px 10px 34px;
+      border-radius:12px;border:1px solid var(--brd);
+      background:var(--inp);color:var(--text);font-size:13px;outline:none
+    }
+    .search-ico{position:absolute;left:11px;top:50%;transform:translateY(-50%);pointer-events:none;opacity:.5}
+    .search-clr{position:absolute;right:9px;top:50%;transform:translateY(-50%);
+      background:none;border:none;cursor:pointer;padding:3px;display:none;color:var(--sub)}
+
+    /* ── Chips ── */
+    .chips{display:flex;gap:7px;padding:0 16px 10px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+    .chip{
+      flex-shrink:0;display:flex;align-items:center;gap:5px;
+      padding:6px 13px;border-radius:20px;cursor:pointer;
+      font-size:12px;font-weight:700;border:1px solid var(--brd);
+      background:var(--card);color:var(--sub);transition:all .15s
+    }
+    .chip.on{border:none;background:var(--btn);color:var(--btnt);
+      box-shadow:0 2px 10px color-mix(in srgb,var(--btn) 40%,transparent)}
+
+    /* ── Q card ── */
+    .qcard{margin:0 16px 9px;border-radius:16px;overflow:hidden;
+      background:var(--card);transition:all .25s}
+    .qcard.open{box-shadow:0 4px 20px rgba(0,0,0,.07)}
+    .qcard-btn{
+      width:100%;text-align:left;padding:13px 13px 13px 14px;
+      border:none;background:none;cursor:pointer;
+      display:flex;align-items:flex-start;gap:11px
+    }
+    .qcard-pip{width:3.5px;min-height:42px;border-radius:4px;flex-shrink:0;margin-top:1px}
+    .qcard-meta{flex:1;min-width:0}
+    .qcard-badge{
+      display:inline-flex;align-items:center;gap:5px;
+      font-size:11px;font-weight:700;padding:2px 8px 2px 6px;
+      border-radius:7px;margin-bottom:5px
+    }
+    .qcard-title{font-size:14px;font-weight:600;color:var(--text);line-height:1.45;text-align:left}
+    .qcard-chev{
+      flex-shrink:0;width:28px;height:28px;border-radius:8px;
+      display:flex;align-items:center;justify-content:center;
+      transition:all .25s;background:var(--inp)
+    }
+    .qcard-body{overflow:hidden;transition:height .32s cubic-bezier(.4,0,.2,1);height:0}
+    .qcard-inner{padding:0 14px 14px 30px;border-top:1px solid var(--brd)}
+    .qcard-inner p{margin:11px 0 0;font-size:13px;color:var(--sub);line-height:1.7}
+
+    /* ── Stat tiles ── */
+    .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px 16px 4px}
+    .grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:0 16px 4px}
+    .stat-tile{
+      padding:11px 6px;border-radius:14px;border:1.5px solid var(--brd);
+      background:var(--card);cursor:pointer;text-align:center;transition:all .2s
+    }
+    .stat-tile.on{box-shadow:0 2px 12px rgba(0,0,0,.1)}
+    .stat-tile .sn{font-size:17px;font-weight:800}
+    .stat-tile .sl{font-size:10px;color:var(--sub);font-weight:600;line-height:1.2;white-space:pre-line}
+
+    /* ── Quiz options ── */
+    .opt{
+      display:flex;align-items:center;gap:10px;padding:12px 14px;
+      border-radius:13px;border:1.5px solid var(--brd);
+      background:var(--card);cursor:pointer;text-align:left;transition:all .15s
+    }
+    .opt:disabled{cursor:default}
+    .opt-ltr{
+      width:26px;height:26px;border-radius:8px;flex-shrink:0;
+      display:flex;align-items:center;justify-content:center;
+      font-size:11px;font-weight:700;border:1.5px solid var(--brd)
+    }
+
+    /* ── Alert boxes ── */
+    .alert{display:flex;gap:7px;align-items:flex-start;padding:9px 11px;border-radius:10px}
+    .alert span{font-size:12px;font-weight:600}
+    .alert.err{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25)}
+    .alert.err span{color:#dc2626}
+    .alert.ok{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25)}
+    .alert.ok span{color:#16a34a}
+    .alert.warn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3)}
+    .alert.warn span{color:#b45309}
+
+    /* ── Mode tabs ── */
+    .mode-tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;
+      background:var(--inp);border-radius:14px;padding:4px;margin:14px 16px}
+    .mode-tab{padding:10px;border-radius:11px;border:none;cursor:pointer;
+      font-size:13px;font-weight:700;background:transparent;color:var(--sub);transition:all .18s}
+    .mode-tab.on{background:var(--btn);color:var(--btnt);
+      box-shadow:0 2px 8px color-mix(in srgb,var(--btn) 40%,transparent)}
+
+    /* ── Role btns ── */
+    .role-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .role-btn{
+      padding:11px 8px;border-radius:12px;border:2px solid var(--inp-brd);
+      background:var(--inp);color:var(--sub);cursor:pointer;
+      font-size:13px;font-weight:700;display:flex;align-items:center;
+      justify-content:center;gap:6px;transition:all .18s
+    }
+    .role-btn.on{background:var(--btn);border-color:var(--btn);color:var(--btnt)}
+
+    /* ── Delete modal ── */
+    .modal-overlay{
+      position:fixed;inset:0;background:rgba(0,0,0,.55);
+      display:flex;align-items:center;justify-content:center;
+      z-index:300;padding:16px
+    }
+    .modal-box{background:var(--card);border-radius:20px;padding:24px 20px;
+      max-width:320px;width:100%;border:1px solid var(--brd)}
+
+    /* ── Progress bar ── */
+    .prog-track{height:5px;border-radius:5px;background:var(--inp);overflow:hidden}
+    .prog-fill{height:100%;border-radius:5px;transition:width .6s ease}
+
+    /* ── Score circle ── */
+    .score-ring{
+      width:90px;height:90px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      margin:0 auto 12px
+    }
+  </style>
+</head>
+<body>
+<div id="root">
+  <div id="page"></div>
+  <nav id="tabbar"></nav>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+//  ReactLearn — Telegram Mini App  (Vanilla JS)
+//  Hech qanday build kerak emas. HTTPS serverga yuklang.
+// ══════════════════════════════════════════════════════
+
+/* ── Telegram API ── */
+const TG = window.Telegram?.WebApp;
+if (TG) { TG.ready(); TG.expand(); }
+
+const isDark   = () => TG?.colorScheme === "dark";
+const btnColor = () => TG?.themeParams?.button_color ?? "#6366f1";
+const btnText  = () => TG?.themeParams?.button_text_color ?? "#ffffff";
+
+/* ── Haptic ── */
+const H = {
+  light:   () => TG?.HapticFeedback?.impactOccurred("light"),
+  medium:  () => TG?.HapticFeedback?.impactOccurred("medium"),
+  success: () => TG?.HapticFeedback?.notificationOccurred("success"),
+  error:   () => TG?.HapticFeedback?.notificationOccurred("error"),
+  select:  () => TG?.HapticFeedback?.selectionChanged(),
+};
+
+/* ── LocalStorage ── */
+const ls = {
+  get:(k,fb)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):fb}catch{return fb}},
+  set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}},
+  del:(k)=>{try{localStorage.removeItem(k)}catch{}},
+};
+
+/* ── Constants ── */
+const ADMIN_PHONE = "+998901234567";
+const CATS = ["All","React Basics","JSX","Props","Lists","Deployment"];
+const CAT = {
+  "React Basics":{ emoji:"⚛️", color:"#7c3aed", bg:"#ede9fe", bgDark:"#3b0764" },
+  "JSX":         { emoji:"🔷", color:"#0284c7", bg:"#e0f2fe", bgDark:"#0c4a6e" },
+  "Props":       { emoji:"📦", color:"#059669", bg:"#d1fae5", bgDark:"#052e16" },
+  "Lists":       { emoji:"📋", color:"#d97706", bg:"#fef3c7", bgDark:"#451a03" },
+  "Deployment":  { emoji:"🚀", color:"#e11d48", bg:"#ffe4e6", bgDark:"#4c0519" },
+};
+const catBg = c => isDark() ? (CAT[c]?.bgDark||"#1e293b") : (CAT[c]?.bg||"#f1f5f9");
+
+const QUESTIONS = [
+  {id:1, question:"React nima?", answer:"React — Facebook tomonidan yaratilgan ochiq manbali JavaScript kutubxonasi. U komponent asosida UI qurish uchun ishlatiladi va Virtual DOM orqali yangilanishlarni tezlashtiradi.", options:["UI qurish uchun JavaScript kutubxonasi","Ma'lumotlar bazasi tizimi","Dasturlash tili","Operatsion tizim"], correctAnswer:"UI qurish uchun JavaScript kutubxonasi", category:"React Basics"},
+  {id:2, question:"JSX nima?", answer:"JSX — JavaScript XML. Bu JavaScript ichida HTML-ga o'xshash kod yozishga imkon beruvchi sintaktik kengaytma. Babel uni React.createElement() chaqiruvlariga aylantiradi.", options:["JavaScript XML sintaksis kengaytmasi","CSS freymwork","Ma'lumotlar bazasi so'rovi","Test kutubxonasi"], correctAnswer:"JavaScript XML sintaksis kengaytmasi", category:"JSX"},
+  {id:3, question:"React Props nima?", answer:"Props (properties) — ota komponentdan bola komponentga uzatiladigan faqat o'qish uchun ma'lumotlar. Ular komponentlarni qayta ishlatish imkonini beradi.", options:["Ota komponentdan bola ga uzatiladigan ma'lumot","O'zgaruvchan ichki holat","CSS xususiyatlari","Ma'lumotlar bazasi yozuvlari"], correctAnswer:"Ota komponentdan bola ga uzatiladigan ma'lumot", category:"Props"},
+  {id:4, question:"useState Hook nima?", answer:"useState — funksional komponentlarga lokal holat qo'shish imkonini beruvchi React Hook. U [joriy qiymat, yangilash funksiyasi] massivini qaytaradi. Holat o'zgarganda komponent qayta render qilinadi.", options:["Funksional komponentga holat qo'shuvchi hook","Yon ta'sirlar uchun hook","Context hook","Memoizatsiya hook"], correctAnswer:"Funksional komponentga holat qo'shuvchi hook", category:"React Basics"},
+  {id:5, question:"Reactda ro'yxat qanday render qilinadi?", answer:".map() metodi yordamida massiv elementlari ustida iteratsiya qilinadi va har bir element uchun JSX qaytariladi. Har bir element uchun noyob 'key' prop berish shart.", options:["Noyob key bilan .map() ishlatib","JSX ichida for sikli","innerHTML ishlatib","createElement bilan"], correctAnswer:"Noyob key bilan .map() ishlatib", category:"Lists"},
+  {id:6, question:"Virtual DOM nima?", answer:"Virtual DOM — haqiqiy DOMning xotiradagi yengil nusxasi. React o'zgarishlarni Virtual DOM orqali hisoblab, minimal yangilanishlarni haqiqiy DOMga qo'llaydi — bu samaradorlikni oshiradi.", options:["Haqiqiy DOMning xotiradagi nusxasi","Alohida brauzer API","CSS render mexanizmi","JavaScript runtime"], correctAnswer:"Haqiqiy DOMning xotiradagi nusxasi", category:"React Basics"},
+  {id:7, question:"useEffect nima uchun ishlatiladi?", answer:"useEffect — yon ta'sirlarni boshqaruvchi hook: ma'lumot yuklash, obunalar, taymer va DOM o'zgartirishlar. Dependency array qachon qayta ishga tushishini nazorat qiladi.", options:["Ma'lumot yuklash kabi yon ta'sirlar uchun","Holatni boshqarish uchun","Komponentlar orasida ma'lumot uzatish","Dinamik uslublash"], correctAnswer:"Ma'lumot yuklash kabi yon ta'sirlar uchun", category:"React Basics"},
+  {id:8, question:"React ilovasini Vercelga qanday deploy qilinadi?", answer:"GitHub ga push qiling → vercel.com da yangi loyiha yarating → GitHub reponi import qiling → Vercel React ni avtomatik aniqlaydi va deploy qiladi.", options:["GitHub ga push, Vercel da import","FTP orqali yuklash","Maxsus React serveri","Faqat CLI orqali"], correctAnswer:"GitHub ga push, Vercel da import", category:"Deployment"},
+  {id:9, question:"Holat va Props farqi nima?", answer:"Props — tashqi, faqat o'qish uchun ota komponentdan keluvchi kirish. Holat — komponent ichida boshqariladigan o'zgaruvchan ichki ma'lumot. Faqat holat o'zgarganda re-render bo'ladi.", options:["Props tashqi/o'zgarmas; holat ichki/o'zgaruvchi","Ikkalasi bir xil","Holat pastga uzatiladi","Ikkalasi o'zgarmas"], correctAnswer:"Props tashqi/o'zgarmas; holat ichki/o'zgaruvchi", category:"Props"},
+  {id:10, question:"React key prop nima?", answer:"key — ro'yxat elementlarini noyob identifikatsiya qiluvchi maxsus prop. React uni reconciliation paytida qaysi elementlar o'zgarganini, qo'shilganini yoki o'chirilganini aniqlash uchun ishlatadi.", options:["Ro'yxat elementini noyob aniqlash uchun prop","Yashirin imkoniyatlarni ochish","Xavfsizlik tokeni","Maxsus atribut"], correctAnswer:"Ro'yxat elementini noyob aniqlash uchun prop", category:"Lists"},
+  {id:11, question:"JSX nimaga kompilyatsiya qilinadi?", answer:"JSX Babel tomonidan React.createElement() chaqiruvlariga aylantiradi. React 17 dan beri yangi JSX transform avtomatik import qiladi, shuning uchun endi 'import React' kerak emas.", options:["React.createElement() chaqiruvlariga","Sof HTML satrlariga","CSS deklaratsiyalariga","TypeScript turlarga"], correctAnswer:"React.createElement() chaqiruvlariga", category:"JSX"},
+  {id:12, question:"npm run build nima qiladi?", answer:"npm run build React ilovasining optimallashtirilgan production bundlini yaratadi: JS ni minifikatsiya qiladi, foydalanilmagan kodni olib tashlaydi va barcha fayllarni /build papkasiga chiqaradi.", options:["Optimallashtirilgan production build yaratadi","Dev serverni ishga tushiradi","Testlarni o'tkazadi","Paketlarni o'rnatadi"], correctAnswer:"Optimallashtirilgan production build yaratadi", category:"Deployment"},
+];
+
+/* ── App State ── */
+const S = {
+  tab: "learn",
+  user: ls.get("rl_user", null),
+  questions: ls.get("rl_questions", QUESTIONS),
+  // learn
+  learnSearch: "",
+  learnCat: "All",
+  // quiz
+  quiz: { phase:"start", qs:[], idx:0, sel:null, confirmed:false, answers:[] },
+  // admin
+  adminSearch: "",
+  adminView: "list", // list | form
+  adminEditing: null,
+  adminDelId: null,
+  adminForm: { question:"", answer:"", category:"React Basics", options:["","","",""], correctAnswer:"" },
+  // profile / auth
+  showAuth: false,
+  authMode: "login",
+  authName: "", authPhone: "", authRole: "student",
+  authErr: "", authOk: "", authBusy: false,
+};
+
+/* ── SVG icon helper ── */
+const ico = (paths, w=18,h=18) =>
+  `<svg width="${w}" height="${h}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${paths}</svg>`;
+
+const I = {
+  learn:   ico('<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>'),
+  quiz:    ico('<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>'),
+  admin:   ico('<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>'),
+  profile: ico('<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>'),
+  search:  ico('<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',15,15),
+  chevron: ico('<polyline points="6 9 12 15 18 9"/>',15,15),
+  check:   ico('<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>'),
+  xcirc:   ico('<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>'),
+  x:       ico('<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',14,14),
+  plus:    ico('<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>'),
+  edit:    ico('<path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>',15,15),
+  trash:   ico('<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>',15,15),
+  phone:   ico('<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.78a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>'),
+  logout:  ico('<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>'),
+  refresh: ico('<polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>'),
+  alert:   ico('<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',14,14),
+  lock:    ico('<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',13,13),
+  user:    ico('<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>'),
+  award:   ico('<circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>'),
+};
+
+const reactLogo = (sz=28,spin=true) =>
+  `<svg width="${sz}" height="${sz}" viewBox="0 0 100 100" style="${spin?'animation:spin 9s linear infinite':''}">
+    <circle cx="50" cy="50" r="9" fill="#61dafb"/>
+    <ellipse cx="50" cy="50" rx="46" ry="17" fill="none" stroke="#61dafb" stroke-width="5"/>
+    <ellipse cx="50" cy="50" rx="46" ry="17" fill="none" stroke="#61dafb" stroke-width="5" transform="rotate(60 50 50)"/>
+    <ellipse cx="50" cy="50" rx="46" ry="17" fill="none" stroke="#61dafb" stroke-width="5" transform="rotate(120 50 50)"/>
+  </svg>`;
+
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+
+/* ══════════════════════════════════════════════════
+   TAB BAR
+══════════════════════════════════════════════════ */
+function renderTabBar() {
+  const tabs = [
+    {id:"learn",   label:"O'rganish", icon:I.learn},
+    {id:"quiz",    label:"Quiz",      icon:I.quiz},
+    ...(S.user?.role==="admin"?[{id:"admin",label:"Admin",icon:I.admin}]:[]),
+    {id:"profile", label:"Profil",    icon:I.profile},
+  ];
+  document.getElementById("tabbar").innerHTML = tabs.map(tb => `
+    <button class="tab${S.tab===tb.id?" on":""}" data-tab="${tb.id}">
+      <div class="tab-bar"></div>
+      ${tb.icon}
+      <span>${tb.label}</span>
+    </button>`).join("");
+
+  document.querySelectorAll(".tab").forEach(btn => {
+    btn.onclick = () => { H.select(); S.tab = btn.dataset.tab; render(); };
+  });
+}
+
+/* ══════════════════════════════════════════════════
+   LEARN TAB
+══════════════════════════════════════════════════ */
+function renderLearn() {
+  const ac = btnColor();
+  const filtered = S.questions.filter(q => {
+    const mc = S.learnCat==="All" || q.category===S.learnCat;
+    const ms = !S.learnSearch || q.question.toLowerCase().includes(S.learnSearch.toLowerCase()) || q.answer.toLowerCase().includes(S.learnSearch.toLowerCase());
+    return mc && ms;
+  });
+
+  const statRows = CATS.slice(1).map(c => {
+    const m = CAT[c]; const cnt = S.questions.filter(q=>q.category===c).length;
+    const on = S.learnCat===c;
+    return {c,m,cnt,on};
+  });
+
+  let html = `
+    <!-- Hero -->
+    <div style="padding:18px 16px 14px;background:${isDark()?"linear-gradient(135deg,#1a2332,#242f3d)":"linear-gradient(135deg,#eef2ff,#fff)"};border-bottom:1px solid var(--brd)">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:48px;height:48px;border-radius:16px;background:linear-gradient(135deg,${ac},#7c3aed);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 6px 20px ${ac}40">
+          ${reactLogo(28)}
+        </div>
+        <div>
+          <h1 style="font-size:20px;font-weight:800;margin:0">React<span style="color:${ac}">Learn</span></h1>
+          <p style="font-size:12px;color:var(--sub);margin:1px 0 0">${S.questions.length} ta savol · 5 ta mavzu</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stat tiles row 1 -->
+    <div class="grid3">
+      ${statRows.slice(0,3).map(({c,m,cnt,on})=>`
+      <button class="stat-tile${on?" on":""}" data-cat="${c}"
+        style="border-color:${on?m.color:"var(--brd)"};background:${on?catBg(c):"var(--card)"}">
+        <div style="font-size:18px;margin-bottom:3px">${m.emoji}</div>
+        <div class="sn" style="color:${on?m.color:"var(--text)"}">${cnt}</div>
+        <div class="sl">${c.replace(" ","\n")}</div>
+      </button>`).join("")}
+    </div>
+    <!-- Stat tiles row 2 -->
+    <div class="grid2">
+      ${statRows.slice(3).map(({c,m,cnt,on})=>`
+      <button class="stat-tile${on?" on":""}" data-cat="${c}"
+        style="border-color:${on?m.color:"var(--brd)"};background:${on?catBg(c):"var(--card)"}">
+        <div style="font-size:18px;margin-bottom:3px">${m.emoji}</div>
+        <div class="sn" style="color:${on?m.color:"var(--text)"}">${cnt}</div>
+        <div class="sl">${c}</div>
+      </button>`).join("")}
+    </div>
+
+    <!-- Search -->
+    <div class="search-wrap">
+      <span class="search-ico">${I.search}</span>
+      <input id="lsearch" placeholder="Savol qidirish…" value="${esc(S.learnSearch)}" autocomplete="off"/>
+      <button class="search-clr" id="lsearchclr" style="display:${S.learnSearch?"block":"none"}">${I.x}</button>
+    </div>
+
+    <!-- Chips -->
+    <div class="chips">
+      ${CATS.map(cat=>{
+        const on=S.learnCat===cat; const m=CAT[cat];
+        return `<button class="chip${on?" on":""}" data-chip="${cat}">${m?`<span>${m.emoji}</span>`:""}${cat}</button>`;
+      }).join("")}
+    </div>
+
+    <div style="padding:0 16px 4px;font-size:12px;font-weight:600;color:var(--sub)">
+      ${filtered.length} ta savol${S.learnCat!=="All"?" — "+S.learnCat:""}${S.learnSearch?` "${S.learnSearch}" uchun`:""}
+    </div>`;
+
+  if (!filtered.length) {
+    html += `<div style="text-align:center;padding:48px 16px;color:var(--sub)">
+      <div style="font-size:48px;margin-bottom:12px">🔍</div>
+      <p style="font-weight:600">Savol topilmadi</p>
+      <p style="font-size:13px;margin-top:4px">Boshqa kalit so'z sinab ko'ring</p></div>`;
+  } else {
+    html += filtered.map(q => qCardHtml(q)).join("");
+  }
+
+  document.getElementById("page").innerHTML = html;
+
+  // Events
+  document.querySelectorAll(".stat-tile").forEach(b => b.onclick=()=>{H.select();S.learnCat=b.dataset.cat;render()});
+  document.querySelectorAll(".chip").forEach(b => b.onclick=()=>{H.select();S.learnCat=b.dataset.chip;render()});
+  const ls2 = document.getElementById("lsearch");
+  const lc  = document.getElementById("lsearchclr");
+  if(ls2){ ls2.oninput=()=>{S.learnSearch=ls2.value;lc.style.display=ls2.value?"block":"none";reRenderLearnList()}; }
+  if(lc) { lc.onclick=()=>{S.learnSearch="";ls2.value="";lc.style.display="none";reRenderLearnList()}; }
+
+  // Accordion
+  document.querySelectorAll(".qcard-btn").forEach(btn => {
+    btn.onclick = () => {
+      H.light();
+      const card = btn.closest(".qcard");
+      const body = card.querySelector(".qcard-body");
+      const inner = card.querySelector(".qcard-inner");
+      const chev = card.querySelector(".qcard-chev");
+      const open = card.classList.toggle("open");
+      const m = CAT[btn.dataset.cat];
+      body.style.height = open ? inner.scrollHeight+"px" : "0";
+      chev.style.background = open ? m.color : "var(--inp)";
+      chev.style.transform  = open ? "rotate(180deg)" : "";
+      chev.querySelector("svg").style.stroke = open ? "#fff" : "var(--sub)";
+    };
+  });
+}
+
+function reRenderLearnList() {
+  const filtered = S.questions.filter(q => {
+    const mc = S.learnCat==="All" || q.category===S.learnCat;
+    const ms = !S.learnSearch || q.question.toLowerCase().includes(S.learnSearch.toLowerCase()) || q.answer.toLowerCase().includes(S.learnSearch.toLowerCase());
+    return mc && ms;
+  });
+  // replace just the list area
+  render();
+}
+
+function qCardHtml(q) {
+  const m = CAT[q.category] || CAT["React Basics"];
+  return `
+    <div class="qcard" style="border:1px solid var(--brd)">
+      <button class="qcard-btn" data-cat="${q.category}">
+        <div class="qcard-pip" style="background:${m.color}"></div>
+        <div class="qcard-meta">
+          <span class="qcard-badge" style="color:${m.color};background:${catBg(q.category)}">${m.emoji} ${q.category}</span>
+          <p class="qcard-title">${esc(q.question)}</p>
+        </div>
+        <div class="qcard-chev" style="color:var(--sub)">${I.chevron}</div>
+      </button>
+      <div class="qcard-body">
+        <div class="qcard-inner"><p>${esc(q.answer)}</p></div>
+      </div>
+    </div>`;
+}
+
+/* ══════════════════════════════════════════════════
+   QUIZ TAB
+══════════════════════════════════════════════════ */
+function renderQuiz() {
+  const q = S.quiz;
+  if (q.phase==="start")  { renderQuizStart(); return; }
+  if (q.phase==="result") { renderQuizResult(); return; }
+  renderQuizQuestion();
+}
+
+function renderQuizStart() {
+  const ac = btnColor();
+  document.getElementById("page").innerHTML = `
+    <div style="padding:0 16px 16px">
+      <div style="text-align:center;padding:28px 0 20px">
+        <div style="width:80px;height:80px;border-radius:24px;background:linear-gradient(135deg,${ac},#7c3aed);
+          margin:0 auto 16px;display:flex;align-items:center;justify-content:center;
+          box-shadow:0 8px 28px ${ac}45">${reactLogo(38)}</div>
+        <h1 style="font-size:22px;font-weight:800;margin-bottom:6px">Quiz Mode</h1>
+        <p style="color:var(--sub);font-size:14px">Bilimingizni sinab ko'ring</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px">
+        ${[["⚡","10 Savol","Tasodifiy"],["🎯","O'z Tempingiz","Vaqt yo'q"],["🏆","Natija","Tahlil bilan"]].map(([e,t,s])=>`
+        <div class="card" style="padding:14px 8px;text-align:center">
+          <div style="font-size:26px;margin-bottom:4px">${e}</div>
+          <div style="font-size:13px;font-weight:700">${t}</div>
+          <div style="font-size:11px;color:var(--sub)">${s}</div>
+        </div>`).join("")}
+      </div>
+      <button class="btn-primary" id="startBtn">⚡ Quizni Boshlash</button>
+    </div>`;
+
+  document.getElementById("startBtn").onclick = () => {
+    H.medium();
+    const qs = [...S.questions].sort(()=>Math.random()-.5).slice(0, Math.min(10, S.questions.length));
+    S.quiz = { phase:"active", qs, idx:0, sel:null, confirmed:false, answers:[] };
+    renderQuiz();
+  };
+}
+
+function renderQuizQuestion() {
+  const q   = S.quiz;
+  const cur = q.qs[q.idx];
+  const m   = CAT[cur.category] || CAT["React Basics"];
+  const pct = (q.idx / q.qs.length) * 100;
+  const correct = q.answers.filter(a=>a.isCorrect).length;
+  const ac = btnColor();
+
+  let optsHtml = cur.options.map((opt,i) => {
+    let cls="opt", brd="var(--brd)", bg="var(--card)", clr="var(--text)", icon="";
+    if (!q.confirmed) {
+      if (q.sel===opt) { bg=ac+"20"; brd=ac; clr=ac; }
+    } else {
+      if (opt===cur.correctAnswer) { bg="rgba(34,197,94,.1)"; brd="var(--success)"; clr="var(--success)"; icon=`<span style="margin-left:auto">${I.check.replace('stroke="currentColor"','stroke="var(--success)"')}</span>`; }
+      else if (opt===q.sel)        { bg="rgba(239,68,68,.1)";  brd="var(--danger)";  clr="var(--danger)";  icon=`<span style="margin-left:auto">${I.xcirc.replace('stroke="currentColor"','stroke="var(--danger)"')}</span>`; }
+      else                         { clr="var(--sub)"; }
+    }
+    return `<button class="${cls}" data-opt="${esc(opt)}" ${q.confirmed?"disabled":""}
+      style="border-color:${brd};background:${bg};width:100%">
+      <span class="opt-ltr" style="border-color:${brd};color:${clr}">${["A","B","C","D"][i]}</span>
+      <span style="flex:1;font-size:13px;font-weight:600;color:${clr}">${esc(opt)}</span>
+      ${icon}
+    </button>`;
+  }).join("");
+
+  let explainHtml = "";
+  if (q.confirmed) {
+    const ok = q.sel===cur.correctAnswer;
+    explainHtml = `<div style="margin:10px 16px 0;padding:12px 14px;border-radius:12px;
+      background:${ok?(isDark()?"rgba(34,197,94,.1)":"#f0fdf4"):(isDark()?"rgba(239,68,68,.1)":"#fef2f2")};
+      border:1px solid ${ok?"rgba(34,197,94,.3)":"rgba(239,68,68,.3)"}">
+      <p style="margin:0;font-size:12px;color:var(--sub);line-height:1.65">
+        <strong style="color:${ok?"var(--success)":"var(--danger)"}">${ok?"✓ To'g'ri!":"✗ Noto'g'ri."}</strong> ${esc(cur.answer)}
+      </p></div>`;
+  }
+
+  const actionHtml = !q.confirmed
+    ? `<button class="btn-primary" id="confirmBtn" ${!q.sel?"disabled":""}
+        style="background:${q.sel?`linear-gradient(135deg,${ac},#7c3aed)`:"var(--inp)"};color:${q.sel?"#fff":"var(--sub)"}">
+        Tasdiqlash</button>`
+    : `<button class="btn-primary" id="nextBtn"
+        style="background:linear-gradient(135deg,${m.color},${ac})">
+        ${q.idx+1>=q.qs.length?"Natijani ko'rish 🏆":"Keyingi Savol →"}
+      </button>`;
+
+  document.getElementById("page").innerHTML = `
+    <!-- Progress -->
+    <div style="padding:12px 16px 8px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:7px">
+        <span style="font-size:12px;font-weight:700;color:var(--sub)">Savol ${q.idx+1}/${q.qs.length}</span>
+        <span style="font-size:12px;font-weight:700;color:${ac}">${correct} ✓</span>
+      </div>
+      <div class="prog-track">
+        <div class="prog-fill" style="width:${pct}%;background:linear-gradient(90deg,${ac},${m.color})"></div>
+      </div>
+    </div>
+
+    <!-- Question -->
+    <div class="card" style="margin:4px 16px 10px;padding:16px">
+      <span class="qcard-badge" style="color:${m.color};background:${catBg(cur.category)};margin-bottom:10px">
+        ${m.emoji} ${cur.category}
+      </span>
+      <p style="font-size:15px;font-weight:700;line-height:1.5">${esc(cur.question)}</p>
+    </div>
+
+    <!-- Options -->
+    <div id="opts" style="padding:0 16px;display:grid;gap:8px">${optsHtml}</div>
+
+    <!-- Explanation -->
+    ${explainHtml}
+
+    <!-- Action -->
+    <div style="padding:12px 16px 0">${actionHtml}</div>`;
+
+  // Option click
+  document.querySelectorAll("#opts .opt").forEach(btn => {
+    btn.onclick = () => {
+      if (q.confirmed) return;
+      H.select(); S.quiz.sel = btn.dataset.opt; renderQuizQuestion();
+    };
+  });
+
+  // Confirm
+  const confirmBtn = document.getElementById("confirmBtn");
+  if (confirmBtn) confirmBtn.onclick = () => {
+    if (!q.sel) return;
+    H[q.sel===cur.correctAnswer?"success":"error"]();
+    S.quiz.confirmed = true;
+    S.quiz.answers.push({ question:cur.question, selected:q.sel, correct:cur.correctAnswer, isCorrect:q.sel===cur.correctAnswer });
+    renderQuizQuestion();
+  };
+
+  // Next
+  const nextBtn = document.getElementById("nextBtn");
+  if (nextBtn) nextBtn.onclick = () => {
+    H.light();
+    if (q.idx+1 >= q.qs.length) { S.quiz.phase="result"; renderQuizResult(); }
+    else { S.quiz.idx++; S.quiz.sel=null; S.quiz.confirmed=false; renderQuizQuestion(); }
+  };
+}
+
+function renderQuizResult() {
+  const { answers, qs } = S.quiz;
+  const score = answers.filter(a=>a.isCorrect).length;
+  const total = qs.length;
+  const pct   = Math.round(score/total*100);
+  const ac    = btnColor();
+  const [gc, gl] = pct>=90?["var(--success)","Ajoyib! 🎉"]:pct>=70?[ac,"Zo'r! 👍"]:pct>=50?["var(--warn)","Yaxshi! 💪"]:["var(--danger)","Mashq Kerak! 📚"];
+
+  const reviewHtml = answers.map((a,i) => `
+    <div style="padding:10px 12px;border-radius:12px;
+      border:1px solid ${a.isCorrect?"rgba(34,197,94,.3)":"rgba(239,68,68,.3)"};
+      background:${a.isCorrect?(isDark()?"rgba(34,197,94,.08)":"#f0fdf4"):(isDark()?"rgba(239,68,68,.08)":"#fef2f2")};
+      margin-bottom:7px">
+      <div style="display:flex;gap:8px;align-items:flex-start">
+        <div style="flex-shrink:0;margin-top:2px">${a.isCorrect?I.check.replace('stroke="currentColor"','stroke="var(--success)"'):I.xcirc.replace('stroke="currentColor"','stroke="var(--danger)"')}</div>
+        <div>
+          <p style="margin:0 0 3px;font-size:12px;font-weight:600">${esc(a.question)}</p>
+          ${!a.isCorrect?`
+          <p style="margin:0;font-size:11px;color:var(--sub)">Sizning: <span style="color:var(--danger);font-weight:700">${esc(a.selected)}</span></p>
+          <p style="margin:0;font-size:11px;color:var(--sub)">To'g'ri: <span style="color:var(--success);font-weight:700">${esc(a.correct)}</span></p>`:""}
+        </div>
+      </div>
+    </div>`).join("");
+
+  document.getElementById("page").innerHTML = `
+    <div style="padding:0 16px 16px">
+      <div style="text-align:center;padding:24px 0 20px">
+        <div class="score-ring" style="background:conic-gradient(${gc} ${pct*3.6}deg,var(--inp) 0deg);
+          box-shadow:0 0 0 7px var(--card),0 6px 24px ${gc}30">
+          <div style="width:68px;height:68px;border-radius:50%;background:var(--card);
+            display:flex;flex-direction:column;align-items:center;justify-content:center">
+            <span style="font-size:22px;font-weight:800">${score}/${total}</span>
+            <span style="font-size:10px;color:var(--sub)">${pct}%</span>
+          </div>
+        </div>
+        <p style="font-size:18px;font-weight:700;color:${gc};margin-top:4px">${gl}</p>
+      </div>
+
+      <p style="font-size:13px;font-weight:700;color:var(--sub);margin-bottom:8px">Javoblar sharhi</p>
+      ${reviewHtml}
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px">
+        <button class="btn-primary" id="retakeBtn" style="background:linear-gradient(135deg,${ac},#7c3aed);display:flex;align-items:center;justify-content:center;gap:7px">
+          ${I.refresh.replace('stroke="currentColor"','stroke="#fff"')} Qayta
+        </button>
+        <button class="btn-outline" id="learnBtn" style="border-color:var(--brd);display:flex;align-items:center;justify-content:center;gap:7px">
+          ${I.learn} O'rganish
+        </button>
+      </div>
+    </div>`;
+
+  document.getElementById("retakeBtn").onclick = () => {
+    H.medium();
+    const qs2 = [...S.questions].sort(()=>Math.random()-.5).slice(0,Math.min(10,S.questions.length));
+    S.quiz = { phase:"active", qs:qs2, idx:0, sel:null, confirmed:false, answers:[] };
+    renderQuiz();
+  };
+  document.getElementById("learnBtn").onclick = () => { H.light(); S.tab="learn"; render(); };
+}
+
+/* ══════════════════════════════════════════════════
+   ADMIN TAB
+══════════════════════════════════════════════════ */
+function renderAdmin() {
+  if (S.user?.role !== "admin") {
+    document.getElementById("page").innerHTML = `
+      <div style="text-align:center;padding:60px 20px;color:var(--sub)">
+        ${I.lock.replace('13','44').replace('13','44')}
+        <p style="font-weight:700;margin-top:14px;font-size:16px;color:var(--text)">Admin ruxsati kerak</p>
+      </div>`;
+    return;
+  }
+  if (S.adminView==="form") { renderAdminForm(); return; }
+
+  const filtered = S.questions.filter(q => !S.adminSearch || q.question.toLowerCase().includes(S.adminSearch.toLowerCase()));
+  const stats = CATS.slice(1).map(c => ({ c, m:CAT[c], cnt:S.questions.filter(q=>q.category===c).length }));
+  const ac = btnColor();
+
+  let html = `
+    <div class="sec-hdr">
+      <div><h2>Admin Panel</h2><p>${S.questions.length} ta savol</p></div>
+      <button id="addBtn" style="display:flex;align-items:center;gap:6px;padding:9px 14px;border-radius:12px;
+        border:none;cursor:pointer;background:linear-gradient(135deg,${ac},#7c3aed);color:#fff;font-size:13px;font-weight:700">
+        ${I.plus.replace('stroke="currentColor"','stroke="#fff"')} Qo'shish
+      </button>
+    </div>
+
+    <div class="grid3">
+      ${stats.slice(0,3).map(({c,m,cnt})=>`
+      <div class="card" style="padding:10px 8px;text-align:center">
+        <div style="font-size:17px">${m.emoji}</div>
+        <div style="font-size:16px;font-weight:800;margin-top:3px">${cnt}</div>
+        <div style="font-size:10px;color:var(--sub);font-weight:600;white-space:pre-line">${c.replace(" ","\n")}</div>
+      </div>`).join("")}
+    </div>
+    <div class="grid2" style="margin-bottom:4px">
+      ${stats.slice(3).map(({c,m,cnt})=>`
+      <div class="card" style="padding:10px 12px;display:flex;align-items:center;gap:8px">
+        <span style="font-size:18px">${m.emoji}</span>
+        <div>
+          <div style="font-size:16px;font-weight:800">${cnt}</div>
+          <div style="font-size:10px;color:var(--sub);font-weight:600">${c}</div>
+        </div>
+      </div>`).join("")}
+    </div>
+
+    <div class="search-wrap">
+      <span class="search-ico">${I.search}</span>
+      <input id="asearch" placeholder="Savol qidirish…" value="${esc(S.adminSearch)}" autocomplete="off"/>
+      <button class="search-clr" id="asearchclr" style="display:${S.adminSearch?"block":"none"}">${I.x}</button>
+    </div>
+
+    <div id="qlist" style="padding:0 16px">
+      ${filtered.map(q=>{
+        const m=CAT[q.category]||CAT["React Basics"];
+        return `<div class="card" style="padding:12px;margin-bottom:8px;display:flex;gap:10px;align-items:flex-start">
+          <div style="flex:1;min-width:0">
+            <span class="qcard-badge" style="color:${m.color};background:${catBg(q.category)};margin-bottom:5px">${m.emoji} ${q.category}</span>
+            <p style="font-size:13px;font-weight:600;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${esc(q.question)}</p>
+            <p style="font-size:11px;color:var(--sub);margin-top:3px">✓ ${esc(q.correctAnswer.slice(0,40))}${q.correctAnswer.length>40?"…":""}</p>
+          </div>
+          <div style="display:flex;gap:4px;flex-shrink:0">
+            <button data-edit="${q.id}" style="padding:8px;border-radius:10px;border:none;cursor:pointer;background:${isDark()?"rgba(99,102,241,.15)":"#eef2ff"}">
+              ${I.edit.replace('stroke="currentColor"','stroke="var(--btn)"')}
+            </button>
+            <button data-del="${q.id}" style="padding:8px;border-radius:10px;border:none;cursor:pointer;background:${isDark()?"rgba(239,68,68,.12)":"#fee2e2"}">
+              ${I.trash.replace('stroke="currentColor"','stroke="#ef4444"')}
+            </button>
+          </div>
+        </div>`;
+      }).join("")}
+      ${!filtered.length?`<div style="text-align:center;padding:40px 0;color:var(--sub)">Savol topilmadi</div>`:""}
+    </div>`;
+
+  // Delete modal
+  if (S.adminDelId) {
+    html += `<div class="modal-overlay" id="delOverlay">
+      <div class="modal-box">
+        <div style="width:52px;height:52px;border-radius:16px;background:rgba(239,68,68,.1);
+          display:flex;align-items:center;justify-content:center;margin:0 auto 14px">
+          ${I.trash.replace('15','24').replace('15','24').replace('stroke="currentColor"','stroke="#ef4444"')}
+        </div>
+        <h3 style="text-align:center;font-size:16px;font-weight:800;margin-bottom:6px">Savolni o'chirish?</h3>
+        <p style="text-align:center;font-size:13px;color:var(--sub);margin-bottom:18px">Bu amalni qaytarib bo'lmaydi.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <button id="delConfirmBtn" style="padding:12px;border-radius:12px;border:none;cursor:pointer;background:#ef4444;color:#fff;font-size:14px;font-weight:700">O'chirish</button>
+          <button id="delCancelBtn" style="padding:12px;border-radius:12px;border:1.5px solid var(--brd);background:none;color:var(--text);font-size:14px;font-weight:700;cursor:pointer">Bekor</button>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  document.getElementById("page").innerHTML = html;
+
+  document.getElementById("addBtn").onclick = () => { H.light(); S.adminEditing=null; S.adminForm={question:"",answer:"",category:"React Basics",options:["","","",""],correctAnswer:""}; S.adminView="form"; renderAdmin(); };
+
+  const as = document.getElementById("asearch");
+  const ac2 = document.getElementById("asearchclr");
+  if(as){ as.oninput=()=>{S.adminSearch=as.value;ac2.style.display=as.value?"block":"none";renderAdmin()}; }
+  if(ac2){ ac2.onclick=()=>{S.adminSearch="";as.value="";ac2.style.display="none";renderAdmin()}; }
+
+  document.querySelectorAll("[data-edit]").forEach(btn => btn.onclick=()=>{
+    H.light();
+    const q = S.questions.find(q=>q.id==btn.dataset.edit);
+    S.adminEditing = q;
+    S.adminForm = {...q, options:[...q.options]};
+    S.adminView="form"; renderAdmin();
+  });
+  document.querySelectorAll("[data-del]").forEach(btn => btn.onclick=()=>{
+    H.medium(); S.adminDelId=parseInt(btn.dataset.del); renderAdmin();
+  });
+  if (S.adminDelId) {
+    document.getElementById("delConfirmBtn").onclick = () => {
+      H.medium();
+      S.questions = S.questions.filter(q=>q.id!==S.adminDelId);
+      ls.set("rl_questions", S.questions);
+      S.adminDelId=null; renderAdmin();
+    };
+    document.getElementById("delCancelBtn").onclick = () => { S.adminDelId=null; renderAdmin(); };
+  }
+}
+
+function renderAdminForm() {
+  const f = S.adminForm;
+  const isEdit = !!S.adminEditing;
+  const valid = f.question && f.answer && f.options.every(o=>o) && f.correctAnswer && f.options.includes(f.correctAnswer);
+  const ac = btnColor();
+
+  const catOpts = CATS.slice(1).map(c=>`<option value="${c}"${f.category===c?" selected":""}>${c}</option>`).join("");
+  const optRows = f.options.map((opt,i)=>`
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+      <input type="radio" name="correct" data-radio="${i}" ${f.correctAnswer===opt&&opt!==""?"checked":""}
+        style="width:16px;height:16px;accent-color:${ac};flex-shrink:0;cursor:pointer"/>
+      <span style="width:26px;height:26px;border-radius:8px;background:${ac};color:var(--btnt);
+        display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0">${["A","B","C","D"][i]}</span>
+      <input class="field" data-optinp="${i}" value="${esc(opt)}" placeholder="Variant ${["A","B","C","D"][i]}" style="padding:10px 12px;flex:1"/>
+    </div>`).join("");
+
+  document.getElementById("page").innerHTML = `
+    <div class="sec-hdr"><h2>${isEdit?"Savolni tahrirlash":"Yangi savol"}</h2></div>
+    <div style="padding:6px 16px;display:grid;gap:12px">
+
+      <div>
+        <label style="display:block;font-size:11px;font-weight:700;color:var(--sub);margin-bottom:5px">SAVOL *</label>
+        <input id="fq" class="field" value="${esc(f.question)}" placeholder="Savolni kiriting…"/>
+      </div>
+      <div>
+        <label style="display:block;font-size:11px;font-weight:700;color:var(--sub);margin-bottom:5px">IZOH *</label>
+        <textarea id="fa" class="field" rows="3" placeholder="Batafsil tushuntirish…">${esc(f.answer)}</textarea>
+      </div>
+      <div>
+        <label style="display:block;font-size:11px;font-weight:700;color:var(--sub);margin-bottom:5px">KATEGORIYA *</label>
+        <select id="fc" class="field" style="padding:12px 13px">${catOpts}</select>
+      </div>
+      <div>
+        <label style="display:block;font-size:11px;font-weight:700;color:var(--sub);margin-bottom:8px">
+          VARIANTLAR * <span style="font-weight:400">(to'g'risini radio bilan belgilang)</span>
+        </label>
+        ${optRows}
+        ${f.correctAnswer?`<div style="display:flex;gap:6px;align-items:center;margin-top:2px;font-size:12px;color:var(--success);font-weight:600">
+          ${I.check.replace('stroke="currentColor"','stroke="var(--success)"').replace('18','14').replace('18','14')} To'g'ri: ${esc(f.correctAnswer)}
+        </div>`:""}
+      </div>
+
+      <button class="btn-primary" id="saveBtn" ${!valid?"disabled":""}>Saqlash</button>
+      <button class="btn-outline" id="cancelFormBtn">← Bekor qilish</button>
+    </div>`;
+
+  // Input bindings
+  document.getElementById("fq").oninput = e => { f.question=e.target.value; refreshSaveBtn(); };
+  document.getElementById("fa").oninput = e => { f.answer=e.target.value; refreshSaveBtn(); };
+  document.getElementById("fc").onchange = e => { f.category=e.target.value; };
+
+  document.querySelectorAll("[data-optinp]").forEach(inp => {
+    inp.oninput = () => {
+      const i = parseInt(inp.dataset.optinp);
+      const old = f.options[i];
+      f.options[i] = inp.value;
+      if (f.correctAnswer===old) f.correctAnswer=inp.value;
+      refreshSaveBtn();
+    };
+  });
+  document.querySelectorAll("[data-radio]").forEach(r => {
+    r.onchange = () => {
+      const i = parseInt(r.dataset.radio);
+      if (f.options[i]) { f.correctAnswer=f.options[i]; refreshSaveBtn(); }
+    };
+  });
+
+  document.getElementById("saveBtn").onclick = () => {
+    const isOk = f.question && f.answer && f.options.every(o=>o) && f.correctAnswer && f.options.includes(f.correctAnswer);
+    if (!isOk) return;
+    H.success();
+    if (isEdit) {
+      S.questions = S.questions.map(q => q.id===S.adminEditing.id ? {...f, id:S.adminEditing.id} : q);
+    } else {
+      S.questions = [...S.questions, {...f, id:Date.now()}];
+    }
+    ls.set("rl_questions", S.questions);
+    S.adminView="list"; S.adminEditing=null;
+    renderAdmin();
+  };
+  document.getElementById("cancelFormBtn").onclick = () => { H.light(); S.adminView="list"; S.adminEditing=null; renderAdmin(); };
+
+  function refreshSaveBtn() {
+    const ok = f.question && f.answer && f.options.every(o=>o) && f.correctAnswer && f.options.includes(f.correctAnswer);
+    const btn = document.getElementById("saveBtn");
+    if(btn) { btn.disabled=!ok; }
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   PROFILE TAB
+══════════════════════════════════════════════════ */
+function renderProfile() {
+  if (S.showAuth) { renderAuth(); return; }
+
+  const u   = S.user;
+  const tgU = TG?.initDataUnsafe?.user;
+  const ac  = btnColor();
+
+  const avatarHtml = u
+    ? `<div style="width:80px;height:80px;border-radius:24px;margin:0 auto 12px;
+        background:linear-gradient(135deg,${ac},#7c3aed);
+        display:flex;align-items:center;justify-content:center;
+        font-size:32px;font-weight:800;color:#fff;
+        box-shadow:0 8px 24px ${ac}45">${esc(u.name[0].toUpperCase())}</div>`
+    : `<div style="width:80px;height:80px;border-radius:24px;background:var(--inp);
+        margin:0 auto 12px;display:flex;align-items:center;justify-content:center">
+        ${I.profile.replace('18','36').replace('18','36').replace('stroke="currentColor"','stroke="var(--sub)"')}</div>`;
+
+  document.getElementById("page").innerHTML = `
+    <div class="sec-hdr"><h2>Profil</h2></div>
+    <div style="text-align:center;padding:20px 16px 16px">
+      ${avatarHtml}
+      <h2 style="font-size:20px;font-weight:800">${esc(tgU?.first_name || u?.name || "Mehmon")}</h2>
+      ${u?`<span style="display:inline-block;margin-top:6px;padding:3px 14px;border-radius:20px;font-size:12px;font-weight:700;
+        background:${u.role==="admin"?"#7c3aed":ac};color:#fff">
+        ${u.role==="admin"?"👑 Admin":"👨‍🎓 Student"}</span>`:""}
+      ${tgU?.username?`<p style="font-size:13px;color:var(--sub);margin-top:6px">@${esc(tgU.username)}</p>`:""}
+    </div>
+
+    <div class="grid3" style="margin-bottom:16px">
+      ${[[S.questions.length,"Savol","📚"],[CATS.length-1,"Kategoriya","🗂️"],[Math.min(10,S.questions.length),"Quiz","⚡"]].map(([n,l,e])=>`
+      <div class="card" style="padding:12px 8px;text-align:center">
+        <div style="font-size:20px">${e}</div>
+        <div style="font-size:18px;font-weight:800">${n}</div>
+        <div style="font-size:11px;font-weight:600;color:var(--sub)">${l}</div>
+      </div>`).join("")}
+    </div>
+
+    <div style="padding:0 16px;display:grid;gap:10px">
+      ${u ? `
+      <div class="card" style="padding:14px 16px;display:flex;align-items:center;gap:12px">
+        <div style="width:40px;height:40px;border-radius:12px;background:var(--inp);display:flex;align-items:center;justify-content:center">
+          ${I.phone}
+        </div>
+        <div>
+          <p style="font-size:11px;font-weight:600;color:var(--sub)">Telefon raqami</p>
+          <p style="font-size:14px;font-weight:700;margin-top:2px">${esc(u.phone)}</p>
+        </div>
+      </div>
+      <button class="btn-outline" id="logoutBtn" style="border-color:var(--danger);color:var(--danger);display:flex;align-items:center;justify-content:center;gap:8px">
+        ${I.logout.replace('stroke="currentColor"','stroke="var(--danger)"')} Chiqish
+      </button>` : `
+      <button class="btn-primary" id="loginBtn" style="background:linear-gradient(135deg,${ac},#7c3aed)">Kirish / Ro'yxatdan o'tish</button>
+      <p style="text-align:center;font-size:12px;color:var(--sub)">Kirmasdan ham barcha savollarni ko'rishingiz mumkin</p>`}
+    </div>
+
+    <div class="card" style="margin:20px 16px 0;padding:14px 16px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        ${reactLogo(26,false)}
+        <span style="font-size:14px;font-weight:800">ReactLearn Mini App</span>
+      </div>
+      <p style="font-size:12px;color:var(--sub);line-height:1.65">Telegram Mini App sifatida qurilgan interaktiv React ta'lim platformasi ⚛️</p>
+      <p style="font-size:11px;color:var(--sub);margin-top:6px">Admin: ${ADMIN_PHONE}</p>
+    </div>`;
+
+  document.getElementById("loginBtn")?.addEventListener("click",()=>{ H.medium(); S.showAuth=true; renderProfile(); });
+  document.getElementById("logoutBtn")?.addEventListener("click",()=>{ H.medium(); ls.del("rl_user"); S.user=null; render(); });
+}
+
+/* ══════════════════════════════════════════════════
+   AUTH SCREEN
+══════════════════════════════════════════════════ */
+function renderAuth() {
+  const ac = btnColor();
+
+  document.getElementById("page").innerHTML = `
+    <div style="text-align:center;padding:20px 16px 14px;border-bottom:1px solid var(--brd)">
+      <div style="width:56px;height:56px;border-radius:18px;background:linear-gradient(135deg,${ac},#7c3aed);
+        margin:0 auto 12px;display:flex;align-items:center;justify-content:center;
+        box-shadow:0 8px 24px ${ac}40">${reactLogo(30)}</div>
+      <h2 style="font-size:18px;font-weight:800;margin-bottom:3px">ReactLearn</h2>
+      <p style="font-size:12px;color:var(--sub)">${S.authMode==="login"?"Hisobingizga kiring":"Yangi hisob yarating"}</p>
+    </div>
+
+    <div class="mode-tabs">
+      <button class="mode-tab${S.authMode==="login"?" on":""}" id="mLogin">Kirish</button>
+      <button class="mode-tab${S.authMode==="register"?" on":""}" id="mReg">Ro'yxat</button>
+    </div>
+
+    <div style="padding:0 16px;display:grid;gap:10px">
+      ${S.authMode==="register"?`
+      <div class="inp-wrap">
+        <span class="inp-ico">${I.user}</span>
+        <input id="aName" class="field field-ico" placeholder="Ism-familiya" value="${esc(S.authName)}" autocomplete="off"/>
+      </div>`:""}
+      <div class="inp-wrap">
+        <span class="inp-ico">${I.phone}</span>
+        <input id="aPhone" class="field field-ico" placeholder="+998 90 123 45 67" value="${esc(S.authPhone)}" type="tel" autocomplete="off"/>
+      </div>
+      <div class="role-grid">
+        <button class="role-btn${S.authRole==="student"?" on":""}" id="rStudent">👨‍🎓 Student</button>
+        <button class="role-btn${S.authRole==="admin"?" on":""}" id="rAdmin">🛡️ Admin</button>
+      </div>
+      ${S.authRole==="admin"?`<div class="alert warn">${I.lock}<span>Admin: <span style="font-family:monospace">${ADMIN_PHONE}</span></span></div>`:""}
+      ${S.authErr?`<div class="alert err">${I.alert}<span>${esc(S.authErr)}</span></div>`:""}
+      ${S.authOk?`<div class="alert ok">${I.check.replace('18','14').replace('18','14').replace('stroke="currentColor"','stroke="var(--success)"')}<span>${esc(S.authOk)}</span></div>`:""}
+      <button class="btn-primary" id="submitBtn" ${S.authBusy?"disabled":""}
+        style="background:linear-gradient(135deg,${ac},#7c3aed)">
+        ${S.authBusy?"⏳ Yuklanmoqda…":S.authMode==="login"?"Kirish":"Ro'yxatdan O'tish"}
+      </button>
+      <button class="btn-outline" id="backBtn">← Orqaga</button>
+    </div>`;
+
+  document.getElementById("mLogin").onclick  = ()=>{ H.select(); S.authMode="login";    S.authErr=""; S.authOk=""; renderAuth(); };
+  document.getElementById("mReg").onclick    = ()=>{ H.select(); S.authMode="register"; S.authErr=""; S.authOk=""; renderAuth(); };
+  document.getElementById("rStudent").onclick = ()=>{ H.select(); S.authRole="student"; renderAuth(); };
+  document.getElementById("rAdmin").onclick   = ()=>{ H.select(); S.authRole="admin";   renderAuth(); };
+  document.getElementById("backBtn").onclick  = ()=>{ H.light(); S.showAuth=false; S.authErr=""; S.authOk=""; renderProfile(); };
+
+  const nameEl  = document.getElementById("aName");
+  const phoneEl = document.getElementById("aPhone");
+  if (nameEl)  nameEl.oninput  = ()=> S.authName  = nameEl.value;
+  if (phoneEl) phoneEl.oninput = ()=> S.authPhone = phoneEl.value;
+
+  document.getElementById("submitBtn").onclick = () => {
+    if (S.authBusy) return;
+    S.authErr=""; S.authOk="";
+    const ph = S.authPhone.trim();
+    if (S.authMode==="register" && !S.authName.trim()) { S.authErr="Ism-familiyangizni kiriting."; H.error(); renderAuth(); return; }
+    if (!ph) { S.authErr="Telefon raqamingizni kiriting."; H.error(); renderAuth(); return; }
+    if (!/^\+?[\d\s\-]{7,15}$/.test(ph)) { S.authErr="To'g'ri telefon raqam kiriting."; H.error(); renderAuth(); return; }
+    if (S.authRole==="admin" && ph!==ADMIN_PHONE) { S.authErr="Ruxsat yo'q. Faqat admin kirishi mumkin."; H.error(); renderAuth(); return; }
+
+    S.authBusy=true; renderAuth();
+    setTimeout(()=>{
+      if (S.authMode==="register") {
+        const users = ls.get("rl_users",[]);
+        if (users.find(u=>u.phone===ph&&u.role===S.authRole)) { S.authErr="Bu raqam allaqachon ro'yxatda."; S.authBusy=false; H.error(); renderAuth(); return; }
+        const u={name:S.authName.trim(),phone:ph,role:S.authRole};
+        ls.set("rl_users",[...users,u]); ls.set("rl_user",u);
+        H.success(); S.authOk="Hisob yaratildi! 🎉"; S.authBusy=false; renderAuth();
+        setTimeout(()=>{ S.user=u; S.showAuth=false; S.authName=""; S.authPhone=""; S.authOk=""; S.tab=u.role==="admin"?"admin":"learn"; render(); },800);
+      } else {
+        if (S.authRole==="admin" && ph===ADMIN_PHONE) {
+          const u={name:"Admin",phone:ph,role:"admin"};
+          ls.set("rl_user",u); H.success(); S.authOk="Xush kelibsiz, Admin!"; S.authBusy=false; renderAuth();
+          setTimeout(()=>{ S.user=u; S.showAuth=false; S.authPhone=""; S.authOk=""; S.tab="admin"; render(); },800);
+          return;
+        }
+        const found=ls.get("rl_users",[]).find(u=>u.phone===ph&&u.role===S.authRole);
+        if(!found){ S.authErr="Hisob topilmadi. Avval ro'yxatdan o'ting."; S.authBusy=false; H.error(); renderAuth(); return; }
+        ls.set("rl_user",found); H.success(); S.authOk=`Xush kelibsiz, ${found.name}!`; S.authBusy=false; renderAuth();
+        setTimeout(()=>{ S.user=found; S.showAuth=false; S.authPhone=""; S.authOk=""; S.tab="learn"; render(); },800);
+      }
+    },550);
+  };
+}
+
+/* ══════════════════════════════════════════════════
+   MAIN RENDER
+══════════════════════════════════════════════════ */
+function render() {
+  document.getElementById("page").style.animation="none";
+  requestAnimationFrame(()=>{
+    document.getElementById("page").style.animation="";
+    const {tab} = S;
+    if      (tab==="learn")   renderLearn();
+    else if (tab==="quiz")    renderQuiz();
+    else if (tab==="admin")   renderAdmin();
+    else if (tab==="profile") renderProfile();
+    renderTabBar();
+    document.getElementById("page").scrollTop = 0;
+  });
+}
+
+/* ── Init ── */
+if (TG) {
+  const dark = TG.colorScheme==="dark";
+  TG.setHeaderColor(dark?"#17212b":"#f0f2f5");
+  TG.setBackgroundColor(dark?"#17212b":"#f0f2f5");
+}
+render();
+</script>
+</body>
+</html>
