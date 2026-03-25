@@ -7,7 +7,7 @@
   <meta name="google-site-verification" content="6fCcals9UDWRqyf-j8_Nd1HZQ6FuOV1mxX7gY3bNloQ" />
   <title>ReactLearn</title>
 
-  
+
   <!-- OTHER -->
   <meta name="author" content=" Saminjonov Jamshid">
   <link rel="icon" type="image/x-icon" href="./favicon.ico">
@@ -54,14 +54,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
     rel="stylesheet" />
-
-
-
-
-
-
-
-
   <style>
     *,
     *::before,
@@ -744,9 +736,14 @@
 
     /* ── Constants ── */
     const ADMIN_PHONE = "+998901234567";
-    const CATS = ["All", "React Basics", "JSX", "Props", "Lists", "Deployment"];
+    const CATS = ["All", "HTML", "CSS", "JavaScript", "Forms", "Media & SVG", "React Basics", "JSX", "Props", "Lists", "Deployment"];
     const CAT = {
-      "React Basics": { emoji: "⚛️", color: "#7c3aed", bg: "#ede9fe", bgDark: "#3b0764" },
+      "HTML": { emoji: "🌐", color: "#ea580c", bg: "#fff7ed", bgDark: "#431407" },
+      "CSS": { emoji: "🎨", color: "#2563eb", bg: "#eff6ff", bgDark: "#1e3a5f" },
+      "JavaScript": { emoji: "⚡", color: "#ca8a04", bg: "#fefce8", bgDark: "#422006" },
+      "Forms": { emoji: "📝", color: "#0891b2", bg: "#ecfeff", bgDark: "#164e63" },
+      "Media & SVG": { emoji: "🖼️", color: "#7c3aed", bg: "#f5f3ff", bgDark: "#3b0764" },
+      "React Basics": { emoji: "⚛️", color: "#6366f1", bg: "#eef2ff", bgDark: "#312e81" },
       "JSX": { emoji: "🔷", color: "#0284c7", bg: "#e0f2fe", bgDark: "#0c4a6e" },
       "Props": { emoji: "📦", color: "#059669", bg: "#d1fae5", bgDark: "#052e16" },
       "Lists": { emoji: "📋", color: "#d97706", bg: "#fef3c7", bgDark: "#451a03" },
@@ -755,18 +752,67 @@
     const catBg = c => isDark() ? (CAT[c]?.bgDark || "#1e293b") : (CAT[c]?.bg || "#f1f5f9");
 
     const QUESTIONS = [
-      { id: 1, question: "React nima?", answer: "React — Facebook tomonidan yaratilgan ochiq manbali JavaScript kutubxonasi. U komponent asosida UI qurish uchun ishlatiladi va Virtual DOM orqali yangilanishlarni tezlashtiradi.", options: ["UI qurish uchun JavaScript kutubxonasi", "Ma'lumotlar bazasi tizimi", "Dasturlash tili", "Operatsion tizim"], correctAnswer: "UI qurish uchun JavaScript kutubxonasi", category: "React Basics" },
-      { id: 2, question: "JSX nima?", answer: "JSX — JavaScript XML. Bu JavaScript ichida HTML-ga o'xshash kod yozishga imkon beruvchi sintaktik kengaytma. Babel uni React.createElement() chaqiruvlariga aylantiradi.", options: ["JavaScript XML sintaksis kengaytmasi", "CSS freymwork", "Ma'lumotlar bazasi so'rovi", "Test kutubxonasi"], correctAnswer: "JavaScript XML sintaksis kengaytmasi", category: "JSX" },
-      { id: 3, question: "React Props nima?", answer: "Props (properties) — ota komponentdan bola komponentga uzatiladigan faqat o'qish uchun ma'lumotlar. Ular komponentlarni qayta ishlatish imkonini beradi.", options: ["Ota komponentdan bola ga uzatiladigan ma'lumot", "O'zgaruvchan ichki holat", "CSS xususiyatlari", "Ma'lumotlar bazasi yozuvlari"], correctAnswer: "Ota komponentdan bola ga uzatiladigan ma'lumot", category: "Props" },
-      { id: 4, question: "useState Hook nima?", answer: "useState — funksional komponentlarga lokal holat qo'shish imkonini beruvchi React Hook. U [joriy qiymat, yangilash funksiyasi] massivini qaytaradi. Holat o'zgarganda komponent qayta render qilinadi.", options: ["Funksional komponentga holat qo'shuvchi hook", "Yon ta'sirlar uchun hook", "Context hook", "Memoizatsiya hook"], correctAnswer: "Funksional komponentga holat qo'shuvchi hook", category: "React Basics" },
-      { id: 5, question: "Reactda ro'yxat qanday render qilinadi?", answer: ".map() metodi yordamida massiv elementlari ustida iteratsiya qilinadi va har bir element uchun JSX qaytariladi. Har bir element uchun noyob 'key' prop berish shart.", options: ["Noyob key bilan .map() ishlatib", "JSX ichida for sikli", "innerHTML ishlatib", "createElement bilan"], correctAnswer: "Noyob key bilan .map() ishlatib", category: "Lists" },
-      { id: 6, question: "Virtual DOM nima?", answer: "Virtual DOM — haqiqiy DOMning xotiradagi yengil nusxasi. React o'zgarishlarni Virtual DOM orqali hisoblab, minimal yangilanishlarni haqiqiy DOMga qo'llaydi — bu samaradorlikni oshiradi.", options: ["Haqiqiy DOMning xotiradagi nusxasi", "Alohida brauzer API", "CSS render mexanizmi", "JavaScript runtime"], correctAnswer: "Haqiqiy DOMning xotiradagi nusxasi", category: "React Basics" },
-      { id: 7, question: "useEffect nima uchun ishlatiladi?", answer: "useEffect — yon ta'sirlarni boshqaruvchi hook: ma'lumot yuklash, obunalar, taymer va DOM o'zgartirishlar. Dependency array qachon qayta ishga tushishini nazorat qiladi.", options: ["Ma'lumot yuklash kabi yon ta'sirlar uchun", "Holatni boshqarish uchun", "Komponentlar orasida ma'lumot uzatish", "Dinamik uslublash"], correctAnswer: "Ma'lumot yuklash kabi yon ta'sirlar uchun", category: "React Basics" },
-      { id: 8, question: "React ilovasini Vercelga qanday deploy qilinadi?", answer: "GitHub ga push qiling → vercel.com da yangi loyiha yarating → GitHub reponi import qiling → Vercel React ni avtomatik aniqlaydi va deploy qiladi.", options: ["GitHub ga push, Vercel da import", "FTP orqali yuklash", "Maxsus React serveri", "Faqat CLI orqali"], correctAnswer: "GitHub ga push, Vercel da import", category: "Deployment" },
-      { id: 9, question: "Holat va Props farqi nima?", answer: "Props — tashqi, faqat o'qish uchun ota komponentdan keluvchi kirish. Holat — komponent ichida boshqariladigan o'zgaruvchan ichki ma'lumot. Faqat holat o'zgarganda re-render bo'ladi.", options: ["Props tashqi/o'zgarmas; holat ichki/o'zgaruvchi", "Ikkalasi bir xil", "Holat pastga uzatiladi", "Ikkalasi o'zgarmas"], correctAnswer: "Props tashqi/o'zgarmas; holat ichki/o'zgaruvchi", category: "Props" },
-      { id: 10, question: "React key prop nima?", answer: "key — ro'yxat elementlarini noyob identifikatsiya qiluvchi maxsus prop. React uni reconciliation paytida qaysi elementlar o'zgarganini, qo'shilganini yoki o'chirilganini aniqlash uchun ishlatadi.", options: ["Ro'yxat elementini noyob aniqlash uchun prop", "Yashirin imkoniyatlarni ochish", "Xavfsizlik tokeni", "Maxsus atribut"], correctAnswer: "Ro'yxat elementini noyob aniqlash uchun prop", category: "Lists" },
-      { id: 11, question: "JSX nimaga kompilyatsiya qilinadi?", answer: "JSX Babel tomonidan React.createElement() chaqiruvlariga aylantiradi. React 17 dan beri yangi JSX transform avtomatik import qiladi, shuning uchun endi 'import React' kerak emas.", options: ["React.createElement() chaqiruvlariga", "Sof HTML satrlariga", "CSS deklaratsiyalariga", "TypeScript turlarga"], correctAnswer: "React.createElement() chaqiruvlariga", category: "JSX" },
-      { id: 12, question: "npm run build nima qiladi?", answer: "npm run build React ilovasining optimallashtirilgan production bundlini yaratadi: JS ni minifikatsiya qiladi, foydalanilmagan kodni olib tashlaydi va barcha fayllarni /build papkasiga chiqaradi.", options: ["Optimallashtirilgan production build yaratadi", "Dev serverni ishga tushiradi", "Testlarni o'tkazadi", "Paketlarni o'rnatadi"], correctAnswer: "Optimallashtirilgan production build yaratadi", category: "Deployment" },
+      // ── HTML ──────────────────────────────────────────────────────────────
+      { id: 1, category: "HTML", question: "HTML nima?", answer: "HTML (HyperText Markup Language) — veb-sahifalarning tuzilmasini belgilovchi belgilash tili. U matn, rasm, havola va boshqa elementlarni teglar orqali tartibga soladi. HTML veb-texnologiyalarning asosi hisoblanadi.", options: ["Veb-sahifa tuzilmasini belgilovchi belgilash tili", "Dasturlash tili", "Ma'lumotlar bazasi tili", "Dizayn vositasi"], correctAnswer: "Veb-sahifa tuzilmasini belgilovchi belgilash tili" },
+      { id: 2, category: "HTML", question: "HTML, CSS va JavaScript ning vazifalari qanday?", answer: "HTML — sahifa tuzilmasi (skelet). CSS — ko'rinish va dizayn (tashqi ko'rinish). JavaScript — interaktivlik va dinamik xulq-atvor (harakat). Ular birgalikda to'liq veb-ilova hosil qiladi.", options: ["HTML tuzilma, CSS dizayn, JS interaktivlik", "Uchala ham bir xil vazifa bajaradi", "HTML dizayn, CSS tuzilma, JS ma'lumot", "HTML server, CSS klient, JS ma'lumotlar bazasi"], correctAnswer: "HTML tuzilma, CSS dizayn, JS interaktivlik" },
+      { id: 3, category: "HTML", question: "Tag nima va qanday yoziladi?", answer: "Tag — HTML elementini belgilovchi kalit so'z bo'lib, burchakli qavslar ichida yoziladi. Ko'pchiligi ochiluvchi <tag> va yopiluvchi </tag> juftligidan iborat. Masalan: <h1>Sarlavha</h1>.", options: ["<tag> va </tag> ko'rinishida yoziladigan belgi", "Faqat matn", "CSS xususiyati", "JavaScript funksiyasi"], correctAnswer: "<tag> va </tag> ko'rinishida yoziladigan belgi" },
+      { id: 4, category: "HTML", question: "<b> va <strong> teglari o'rtasidagi farq nima?", answer: "<b> — faqat vizual qalinlashtirish (bold) uchun. <strong> — semantik jihatdan muhim matnni bildiradi va qidiruv tizimlari hamda ekran o'quvchilar uchun ahamiyatlidir. Ikkalasi ham qalin ko'rsatadi, lekin <strong> ma'noli.", options: ["<b> vizual, <strong> semantik muhimlik", "Ikkalasi bir xil", "<strong> vizual, <b> semantik", "Faqat shrift farqi bor"], correctAnswer: "<b> vizual, <strong> semantik muhimlik" },
+      { id: 5, category: "HTML", question: "Attribute nima?", answer: "Attribute — HTML tegiga qo'shimcha ma'lumot beruvchi xususiyat. Ochiluvchi teg ichida name='value' ko'rinishida yoziladi. Masalan: <a href='url'>da href attributi URL manzilini belgilaydi.", options: ["Tegga qo'shimcha ma'lumot beruvchi xususiyat", "Alohida teg turi", "CSS uslubi", "JavaScript kodi"], correctAnswer: "Tegga qo'shimcha ma'lumot beruvchi xususiyat" },
+      { id: 6, category: "HTML", question: "<a> tegining href va target attributlari nima vazifa bajaradi?", answer: "href — havola manzilini belgilaydi (URL, fayl, yoki sahifa ichidagi #id). target='_blank' esa havolani yangi yorliqda ochadi. target='_self' joriy yorliqda ochadi (standart).", options: ["href — manzil, target — qayerda ochilishi", "href — rang, target — o'lcham", "href — fayl nomi, target — yuklab olish", "Ikkalasi ham manzil belgilaydi"], correctAnswer: "href — manzil, target — qayerda ochilishi" },
+      { id: 7, category: "HTML", question: "Block va Inline teglar qanday farqlanadi?", answer: "Block teglar (div, p, h1) yangi qatordan boshlanib, to'liq kenglikni egallaydi. Inline teglar (span, a, img) matn ichida joylashib, faqat zarur kenglikni oladi va yangi qator ochmaydi.", options: ["Block to'liq kenglik, Inline matn ichida", "Block tor, Inline keng", "Ular bir xil ishlaydi", "Block gorizontal, Inline vertikal"], correctAnswer: "Block to'liq kenglik, Inline matn ichida" },
+      { id: 8, category: "HTML", question: "Semantic teglar nima va nega muhim?", answer: "Semantic teglar (header, nav, main, section, article, footer) o'z mazmunini ifodalaydi. Ular SEO uchun foydali, ekran o'quvchilariga yaxshi, va kodni tushunarli qiladi.", options: ["Mazmunini ifodalaydigan teglar, SEO va accessibility uchun muhim", "Faqat vizual maqsadda ishlatiladigan teglar", "Tezlikni oshiruvchi teglar", "Faqat mobil qurilmalar uchun teglar"], correctAnswer: "Mazmunini ifodalaydigan teglar, SEO va accessibility uchun muhim" },
+      { id: 9, category: "HTML", question: "<img> tegining src va alt attributlari nima?", answer: "src — rasm fayli yo'lini (URL yoki local path) belgilaydi. alt — rasm yuklanmasa yoki ko'zi ojiz foydalanuvchilar uchun matnli tavsif beradi. alt SEO uchun ham muhimdir.", options: ["src — fayl yo'li, alt — matnli tavsif", "src — o'lcham, alt — rang", "src — sarlavha, alt — havola", "Ikkalasi bir xil vazifani bajaradi"], correctAnswer: "src — fayl yo'li, alt — matnli tavsif" },
+      { id: 10, category: "HTML", question: "Table tegining asosiy elementlari qaysilar?", answer: "<table> — asosiy konteyner. <tr> — qator (table row). <td> — oddiy katakcha (table data). <th> — sarlavha katakchasi (table header, qalin va markazda). <thead>, <tbody>, <tfoot> — guruhlash uchun.", options: ["table, tr, td, th", "div, span, p, h1", "ul, ol, li, dl", "form, input, select, button"], correctAnswer: "table, tr, td, th" },
+
+      // ── CSS ───────────────────────────────────────────────────────────────
+      { id: 11, category: "CSS", question: "CSS da ID va Class selektorlarning farqi nima?", answer: "ID (#id) — sahifada faqat bitta elementda ishlatiladi, yuqori ustuvorlikka ega. Class (.class) — bir nechta elementda takrorlanishi mumkin, moslashuvchan. Odatda class ko'proq ishlatiladi.", options: ["ID bitta element uchun, Class ko'p elementda", "ID va Class bir xil", "Class bitta, ID ko'p", "Faqat yozilish farqi bor"], correctAnswer: "ID bitta element uchun, Class ko'p elementda" },
+      { id: 12, category: "CSS", question: "CSS da display: flex nima vazifa bajaradi?", answer: "display: flex konteynerni flex konteyneriga aylantiradi. Bolalar elementlar avtomatik gorizontal (yoki vertikal) joylashadi. justify-content, align-items kabi xususiyatlar bilan moslashuvchan layout yaratiladi.", options: ["Elementlarni moslashuvchan joylashtirishga imkon beradi", "Elementni yashiradi", "Elementni o'chiradi", "Bloklarni qatorda ko'rsatadi"], correctAnswer: "Elementlarni moslashuvchan joylashtirishga imkon beradi" },
+      { id: 13, category: "CSS", question: "Padding va Margin ning farqi nima?", answer: "Padding — element ichidagi bo'sh joy (mazmun va border o'rtasi). Margin — element tashqarisidagi bo'sh joy (boshqa elementlarga masofa). Padding elementning fon rangini ko'rsatadi, Margin ko'rsatmaydi.", options: ["Padding ichki, Margin tashqi bo'sh joy", "Padding va Margin bir xil", "Padding tashqi, Margin ichki", "Faqat miqdor farqi bor"], correctAnswer: "Padding ichki, Margin tashqi bo'sh joy" },
+      { id: 14, category: "CSS", question: "CSS da border xususiyati qanday yoziladi?", answer: "border: kengligi turi rangi ko'rinishida yoziladi. Masalan: border: 1px solid red; — 1 piksel qattiq qizil chegara. Alohida: border-width, border-style (solid/dashed/dotted), border-color.", options: ["border: 1px solid red — kenglik, tur, rang", "border: red 1px — rang, kenglik", "border: solid — faqat tur", "border: 1px — faqat kenglik"], correctAnswer: "border: 1px solid red — kenglik, tur, rang" },
+      { id: 15, category: "CSS", question: "CSS da visibility va display: none farqi nima?", answer: "visibility: hidden — element ko'rinmaydi, lekin joy egallaydi. display: none — element butunlay sahifadan olinib tashlanadi, joy ham egallamamaydi. Animatsiya uchun visibility foydali.", options: ["visibility joy egallaydi, display:none joy egallamamaydi", "Ikkalasi bir xil natija beradi", "display:none joy egallaydi", "visibility elementni o'chiradi"], correctAnswer: "visibility joy egallaydi, display:none joy egallamamaydi" },
+
+      // ── JavaScript ────────────────────────────────────────────────────────
+      { id: 16, category: "JavaScript", question: "JavaScript veb-sahifada qanday vazifa bajaradi?", answer: "JavaScript sahifani interaktiv va dinamik qiladi: tugma bosilganda narsa o'zgartirish, forma tekshirish, animatsiya, ma'lumot yuklash (fetch), va sahifa elementlarini o'zgartirish (DOM manipulyatsiya).", options: ["Sahifani interaktiv va dinamik qiladi", "Sahifa tuzilmasini belgilaydi", "Rang va dizayn beradi", "Server bilan ishlaydi faqat"], correctAnswer: "Sahifani interaktiv va dinamik qiladi" },
+      { id: 17, category: "JavaScript", question: "console.log() nima uchun ishlatiladi?", answer: "console.log() — brauzer konsolida ma'lumot chiqarish uchun ishlatiladi. Debug qilish, qiymatlarni tekshirish va xatolarni topishda juda qulay. F12 yoki DevTools orqali konsolni ko'rish mumkin.", options: ["Konsolda ma'lumot chiqarish (debug uchun)", "Ekranda matn ko'rsatish", "Server ga ma'lumot yuborish", "Faylga yozish"], correctAnswer: "Konsolda ma'lumot chiqarish (debug uchun)" },
+      { id: 18, category: "JavaScript", question: "document.querySelector() nima vazifa bajaradi?", answer: "document.querySelector(selector) — sahifadan CSS selektor bo'yicha birinchi mos elementni topadi. Masalan: querySelector('#id'), querySelector('.class'), querySelector('h1'). Topilmasa null qaytaradi.", options: ["CSS selektor bo'yicha DOM elementini topadi", "Yangi element yaratadi", "Elementni o'chiradi", "Sahifani yangilaydi"], correctAnswer: "CSS selektor bo'yicha DOM elementini topadi" },
+      { id: 19, category: "JavaScript", question: "onclick va onmousemove hodisalari qanday ishlaydi?", answer: "onclick — element bosilganda ishga tushadigan funksiyani bajaradi. onmousemove — sichqoncha element ustida harakatlanayotganda qayta-qayta chaqiriladi. Hodisalar orqali foydalanuvchi harakati aniqlanadi.", options: ["onclick bosilganda, onmousemove sichqoncha harakatida ishga tushadi", "Ikkalasi bir xil", "onclick sichqoncha, onmousemove klaviatura uchun", "Faqat onclick ishlaydi"], correctAnswer: "onclick bosilganda, onmousemove sichqoncha harakatida ishga tushadi" },
+      { id: 20, category: "JavaScript", question: "JavaScript da function nima?", answer: "Function — bir necha marta chaqirish mumkin bo'lgan kod bloki. function nom() { ... } ko'rinishida yoziladi. Parametrlar va return qiymati bo'lishi mumkin. Kodni qayta ishlatish va tartibga solishga yordam beradi.", options: ["Qayta ishlatish mumkin bo'lgan kod bloki", "Faqat bir marta ishlaydigan kod", "CSS xususiyati", "HTML tegi"], correctAnswer: "Qayta ishlatish mumkin bo'lgan kod bloki" },
+
+      // ── Forms ─────────────────────────────────────────────────────────────
+      { id: 21, category: "Forms", question: "HTML formaning asosiy tuzilmasi qanday?", answer: "<form> tegi ichida <input>, <textarea>, <select>, <button> elementlari joylashadi. action attributi ma'lumot yuborilajak URL ni, method attributi (GET/POST) yuborish usulini belgilaydi.", options: ["form tegi ichida input, select, button elementlari", "Faqat input elementlari kerak", "Table ichida yoziladi", "div ichida yoziladi"], correctAnswer: "form tegi ichida input, select, button elementlari" },
+      { id: 22, category: "Forms", question: "Input ning type attributi qanday turlari bor?", answer: "text, password, email, number, tel, date, checkbox, radio, file, submit, reset, button, range, color, search — bularning har biri alohida ko'rinish va tekshiruv beradi. Email type avtomatik @ ni tekshiradi.", options: ["text, password, email, number, checkbox, radio va boshqalar", "Faqat text va password", "Faqat bitta tur mavjud", "Type attributi yo'q"], correctAnswer: "text, password, email, number, checkbox, radio va boshqalar" },
+      { id: 23, category: "Forms", question: "placeholder va autocomplete attributlari nima?", answer: "placeholder — input bo'sh turganida ko'rsatiladigan yordamchi matn (ko'kimtir rangli). autocomplete='on/off' — brauzerni avvalgi yozilgan qiymatlarni taklif qilishini yoqadi yoki o'chiradi.", options: ["placeholder — yordamchi matn, autocomplete — brauzer taklifi", "placeholder — majburiy qiymat, autocomplete — belgi", "Ikkalasi bir xil vazifani bajaradi", "Ular faqat password uchun ishlaydi"], correctAnswer: "placeholder — yordamchi matn, autocomplete — brauzer taklifi" },
+      { id: 24, category: "Forms", question: "<select> va <option> teglari qanday ishlaydi?", answer: "<select> — ochiladigan ro'yxat yaratadi. Ichidagi <option> teglari tanlov variantlarini belgilaydi. selected attributi standart tanlangan qiymatni ko'rsatadi. multiple attributi bir nechta tanlovga ruxsat beradi.", options: ["select — ochiladigan ro'yxat, option — variant", "select — radio, option — checkbox", "Ikkalasi bir xil", "select — forma, option — input"], correctAnswer: "select — ochiladigan ro'yxat, option — variant" },
+      { id: 25, category: "Forms", question: "fieldset va legend teglari nima uchun ishlatiladi?", answer: "<fieldset> — forma elementlarini guruhlaydi va atrofida chegara chizadi. <legend> — fieldset uchun sarlavha bo'lib, chegaraning ustida ko'rsatiladi. Uzun formalarni bo'limlarga bo'lishda foydali.", options: ["fieldset guruhla, legend — sarlavha", "fieldset — input, legend — label", "Ikkalasi forma uchun shart", "Faqat dizayn maqsadida"], correctAnswer: "fieldset guruhla, legend — sarlavha" },
+
+      // ── Media & SVG ───────────────────────────────────────────────────────
+      { id: 26, category: "Media & SVG", question: "HTML5 da video tegi qanday ishlatiladi?", answer: "<video src='fayl.mp4' controls> tegida controls — boshqaruv tugmalarini, autoplay — avtomatik ijroni, loop — takrorlashni, muted — ovozni o'chirib belgilaydi. Autoplay ko'p brauzerlarda faqat muted bilan ishlaydi.", options: ["video tegi controls, autoplay, loop attributlari bilan ishlatiladi", "video tegi faqat iframe bilan ishlaydi", "video src o'rniga href ishlatiladi", "Videoni faqat JS orqali qo'shish mumkin"], correctAnswer: "video tegi controls, autoplay, loop attributlari bilan ishlatiladi" },
+      { id: 27, category: "Media & SVG", question: "<iframe> nima va qayerda ishlatiladi?", answer: "<iframe> — boshqa veb-sahifa yoki tashqi kontentni joriy sahifaga joylashtiradi. YouTube videolarini, Google Maps ni, boshqa saytlarni embed qilish uchun ishlatiladi. src attributi manzilni belgilaydi.", options: ["Boshqa sahifa yoki tashqi kontentni joylashtiradi", "Rasm ko'rsatish uchun", "Havola yaratish uchun", "Forma yuborish uchun"], correctAnswer: "Boshqa sahifa yoki tashqi kontentni joylashtiradi" },
+      { id: 28, category: "Media & SVG", question: "SVG nima va HTML dan qanday farq qiladi?", answer: "SVG (Scalable Vector Graphics) — matematik tenglamalar asosida chizilgan vektorli grafika. Har qanday o'lchamda sifat yo'qotmaydi. HTML elementlari kabi DOM da ishlaydi va CSS/JS orqali boshqarish mumkin.", options: ["Vektorli grafika, o'lcham o'zgarganda sifat yo'qotmaydi", "Oddiy rasm formati", "Faqat animatsiya uchun", "Server tomonda ishlaydi"], correctAnswer: "Vektorli grafika, o'lcham o'zgarganda sifat yo'qotmaydi" },
+      { id: 29, category: "Media & SVG", question: "SVG da circle elementi qanday yoziladi?", answer: "<circle cx='50' cy='50' r='40' fill='blue' stroke='red' stroke-width='2'/> — cx, cy markaz koordinatalarini, r radiusni, fill ichki rangni, stroke chegara rangini belgilaydi.", options: ["cx, cy (markaz), r (radius) attributlari bilan", "width, height attributlari bilan", "src attributi bilan", "circle tegi yo'q, rect ishlatiladi"], correctAnswer: "cx, cy (markaz), r (radius) attributlari bilan" },
+      { id: 30, category: "Media & SVG", question: "Canvas va SVG ning asosiy farqi nima?", answer: "Canvas — JavaScript orqali piksel asosida (raster) chizadi, o'lcham o'zgarganda sifat tushadi. SVG — vektor asosida, DOM elementlari bor, o'lcham o'zgarganda sifat o'zgarmaydi. Canvas o'yin va animatsiya uchun tezroq.", options: ["Canvas piksel(raster), SVG vektor — har biri o'z o'rniga ega", "Ikkalasi bir xil ishlaydi", "Canvas SVG dan tezroq har doim", "SVG faqat statik, Canvas faqat animatsiya"], correctAnswer: "Canvas piksel(raster), SVG vektor — har biri o'z o'rniga ega" },
+
+      // ── React Basics ──────────────────────────────────────────────────────
+      { id: 31, category: "React Basics", question: "React nima?", answer: "React — Facebook tomonidan yaratilgan ochiq manbali JavaScript kutubxonasi. U komponent asosida UI qurish uchun ishlatiladi va Virtual DOM orqali yangilanishlarni tezlashtiradi.", options: ["UI qurish uchun JavaScript kutubxonasi", "Ma'lumotlar bazasi tizimi", "Dasturlash tili", "Operatsion tizim"], correctAnswer: "UI qurish uchun JavaScript kutubxonasi" },
+      { id: 32, category: "React Basics", question: "useState Hook nima?", answer: "useState — funksional komponentlarga lokal holat qo'shish imkonini beruvchi React Hook. U [joriy qiymat, yangilash funksiyasi] massivini qaytaradi. Holat o'zgarganda komponent qayta render qilinadi.", options: ["Funksional komponentga holat qo'shuvchi hook", "Yon ta'sirlar uchun hook", "Context hook", "Memoizatsiya hook"], correctAnswer: "Funksional komponentga holat qo'shuvchi hook" },
+      { id: 33, category: "React Basics", question: "Virtual DOM nima?", answer: "Virtual DOM — haqiqiy DOMning xotiradagi yengil nusxasi. React o'zgarishlarni Virtual DOM orqali hisoblab, minimal yangilanishlarni haqiqiy DOMga qo'llaydi — bu samaradorlikni oshiradi.", options: ["Haqiqiy DOMning xotiradagi nusxasi", "Alohida brauzer API", "CSS render mexanizmi", "JavaScript runtime"], correctAnswer: "Haqiqiy DOMning xotiradagi nusxasi" },
+      { id: 34, category: "React Basics", question: "useEffect nima uchun ishlatiladi?", answer: "useEffect — yon ta'sirlarni boshqaruvchi hook: ma'lumot yuklash, obunalar, taymer va DOM o'zgartirishlar. Dependency array qachon qayta ishga tushishini nazorat qiladi.", options: ["Ma'lumot yuklash kabi yon ta'sirlar uchun", "Holatni boshqarish uchun", "Komponentlar orasida ma'lumot uzatish", "Dinamik uslublash"], correctAnswer: "Ma'lumot yuklash kabi yon ta'sirlar uchun" },
+
+      // ── JSX ───────────────────────────────────────────────────────────────
+      { id: 35, category: "JSX", question: "JSX nima?", answer: "JSX — JavaScript XML. Bu JavaScript ichida HTML-ga o'xshash kod yozishga imkon beruvchi sintaktik kengaytma. Babel uni React.createElement() chaqiruvlariga aylantiradi.", options: ["JavaScript XML sintaksis kengaytmasi", "CSS freymwork", "Ma'lumotlar bazasi so'rovi", "Test kutubxonasi"], correctAnswer: "JavaScript XML sintaksis kengaytmasi" },
+      { id: 36, category: "JSX", question: "JSX nimaga kompilyatsiya qilinadi?", answer: "JSX Babel tomonidan React.createElement() chaqiruvlariga aylantiradi. React 17 dan beri yangi JSX transform avtomatik import qiladi, shuning uchun endi 'import React' kerak emas.", options: ["React.createElement() chaqiruvlariga", "Sof HTML satrlariga", "CSS deklaratsiyalariga", "TypeScript turlarga"], correctAnswer: "React.createElement() chaqiruvlariga" },
+
+      // ── Props ─────────────────────────────────────────────────────────────
+      { id: 37, category: "Props", question: "React Props nima?", answer: "Props (properties) — ota komponentdan bola komponentga uzatiladigan faqat o'qish uchun ma'lumotlar. Ular komponentlarni qayta ishlatish imkonini beradi.", options: ["Ota komponentdan bola ga uzatiladigan ma'lumot", "O'zgaruvchan ichki holat", "CSS xususiyatlari", "Ma'lumotlar bazasi yozuvlari"], correctAnswer: "Ota komponentdan bola ga uzatiladigan ma'lumot" },
+      { id: 38, category: "Props", question: "Holat va Props farqi nima?", answer: "Props — tashqi, faqat o'qish uchun ota komponentdan keluvchi kirish. Holat — komponent ichida boshqariladigan o'zgaruvchan ichki ma'lumot. Faqat holat o'zgarganda re-render bo'ladi.", options: ["Props tashqi/o'zgarmas; holat ichki/o'zgaruvchi", "Ikkalasi bir xil", "Holat pastga uzatiladi", "Ikkalasi o'zgarmas"], correctAnswer: "Props tashqi/o'zgarmas; holat ichki/o'zgaruvchi" },
+
+      // ── Lists ─────────────────────────────────────────────────────────────
+      { id: 39, category: "Lists", question: "Reactda ro'yxat qanday render qilinadi?", answer: ".map() metodi yordamida massiv elementlari ustida iteratsiya qilinadi va har bir element uchun JSX qaytariladi. Har bir element uchun noyob 'key' prop berish shart.", options: ["Noyob key bilan .map() ishlatib", "JSX ichida for sikli", "innerHTML ishlatib", "createElement bilan"], correctAnswer: "Noyob key bilan .map() ishlatib" },
+      { id: 40, category: "Lists", question: "React key prop nima?", answer: "key — ro'yxat elementlarini noyob identifikatsiya qiluvchi maxsus prop. React uni reconciliation paytida qaysi elementlar o'zgarganini, qo'shilganini yoki o'chirilganini aniqlash uchun ishlatadi.", options: ["Ro'yxat elementini noyob aniqlash uchun prop", "Yashirin imkoniyatlarni ochish", "Xavfsizlik tokeni", "Maxsus atribut"], correctAnswer: "Ro'yxat elementini noyob aniqlash uchun prop" },
+
+      // ── Deployment ────────────────────────────────────────────────────────
+      { id: 41, category: "Deployment", question: "React ilovasini Vercelga qanday deploy qilinadi?", answer: "GitHub ga push qiling → vercel.com da yangi loyiha yarating → GitHub reponi import qiling → Vercel React ni avtomatik aniqlaydi va deploy qiladi.", options: ["GitHub ga push, Vercel da import", "FTP orqali yuklash", "Maxsus React serveri", "Faqat CLI orqali"], correctAnswer: "GitHub ga push, Vercel da import" },
+      { id: 42, category: "Deployment", question: "npm run build nima qiladi?", answer: "npm run build React ilovasining optimallashtirilgan production bundlini yaratadi: JS ni minifikatsiya qiladi, foydalanilmagan kodni olib tashlaydi va barcha fayllarni /build papkasiga chiqaradi.", options: ["Optimallashtirilgan production build yaratadi", "Dev serverni ishga tushiradi", "Testlarni o'tkazadi", "Paketlarni o'rnatadi"], correctAnswer: "Optimallashtirilgan production build yaratadi" },
     ];
 
     /* ── App State ── */
@@ -784,7 +830,7 @@
       adminView: "list", // list | form
       adminEditing: null,
       adminDelId: null,
-      adminForm: { question: "", answer: "", category: "React Basics", options: ["", "", "", ""], correctAnswer: "" },
+      adminForm: { question: "", answer: "", category: "HTML", options: ["", "", "", ""], correctAnswer: "" },
       // profile / auth
       showAuth: false,
       authMode: "login",
@@ -876,29 +922,19 @@
         </div>
         <div>
           <h1 style="font-size:20px;font-weight:800;margin:0">React<span style="color:${ac}">Learn</span></h1>
-          <p style="font-size:12px;color:var(--sub);margin:1px 0 0">${S.questions.length} ta savol · 5 ta mavzu</p>
+          <p style="font-size:12px;color:var(--sub);margin:1px 0 0">${S.questions.length} ta savol · 10 ta mavzu</p>
         </div>
       </div>
     </div>
 
-    <!-- Stat tiles row 1 -->
-    <div class="grid3">
-      ${statRows.slice(0, 3).map(({ c, m, cnt, on }) => `
+    <!-- Stat tiles — horizontal scroll -->
+    <div style="display:flex;gap:8px;padding:12px 16px 4px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch">
+      ${statRows.map(({ c, m, cnt, on }) => `
       <button class="stat-tile${on ? " on" : ""}" data-cat="${c}"
-        style="border-color:${on ? m.color : "var(--brd)"};background:${on ? catBg(c) : "var(--card)"}">
-        <div style="font-size:18px;margin-bottom:3px">${m.emoji}</div>
+        style="flex-shrink:0;min-width:72px;border-color:${on ? m.color : "var(--brd)"};background:${on ? catBg(c) : "var(--card)"}">
+        <div style="font-size:20px;margin-bottom:3px">${m.emoji}</div>
         <div class="sn" style="color:${on ? m.color : "var(--text)"}">${cnt}</div>
-        <div class="sl">${c.replace(" ", "\n")}</div>
-      </button>`).join("")}
-    </div>
-    <!-- Stat tiles row 2 -->
-    <div class="grid2">
-      ${statRows.slice(3).map(({ c, m, cnt, on }) => `
-      <button class="stat-tile${on ? " on" : ""}" data-cat="${c}"
-        style="border-color:${on ? m.color : "var(--brd)"};background:${on ? catBg(c) : "var(--card)"}">
-        <div style="font-size:18px;margin-bottom:3px">${m.emoji}</div>
-        <div class="sn" style="color:${on ? m.color : "var(--text)"}">${cnt}</div>
-        <div class="sl">${c}</div>
+        <div class="sl" style="white-space:pre-line">${c.replace(" ", "\n")}</div>
       </button>`).join("")}
     </div>
 
@@ -1214,22 +1250,12 @@
       </button>
     </div>
 
-    <div class="grid3">
-      ${stats.slice(0, 3).map(({ c, m, cnt }) => `
-      <div class="card" style="padding:10px 8px;text-align:center">
-        <div style="font-size:17px">${m.emoji}</div>
-        <div style="font-size:16px;font-weight:800;margin-top:3px">${cnt}</div>
+    <div style="display:flex;gap:8px;padding:10px 16px 12px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch">
+      ${stats.map(({ c, m, cnt }) => `
+      <div class="card" style="flex-shrink:0;min-width:70px;padding:10px 8px;text-align:center">
+        <div style="font-size:18px">${m.emoji}</div>
+        <div style="font-size:15px;font-weight:800;margin-top:3px">${cnt}</div>
         <div style="font-size:10px;color:var(--sub);font-weight:600;white-space:pre-line">${c.replace(" ", "\n")}</div>
-      </div>`).join("")}
-    </div>
-    <div class="grid2" style="margin-bottom:4px">
-      ${stats.slice(3).map(({ c, m, cnt }) => `
-      <div class="card" style="padding:10px 12px;display:flex;align-items:center;gap:8px">
-        <span style="font-size:18px">${m.emoji}</span>
-        <div>
-          <div style="font-size:16px;font-weight:800">${cnt}</div>
-          <div style="font-size:10px;color:var(--sub);font-weight:600">${c}</div>
-        </div>
       </div>`).join("")}
     </div>
 
@@ -1430,7 +1456,7 @@
     </div>
 
     <div class="grid3" style="margin-bottom:16px">
-      ${[[S.questions.length, "Savol", "📚"], [CATS.length - 1, "Kategoriya", "🗂️"], [Math.min(10, S.questions.length), "Quiz", "⚡"]].map(([n, l, e]) => `
+      ${[[S.questions.length, "Savol", "📚"], [CATS.length - 1, "Mavzu", "🗂️"], [Math.min(10, S.questions.length), "Quiz", "⚡"]].map(([n, l, e]) => `
       <div class="card" style="padding:12px 8px;text-align:center">
         <div style="font-size:20px">${e}</div>
         <div style="font-size:18px;font-weight:800">${n}</div>
